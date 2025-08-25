@@ -1,98 +1,111 @@
 #pragma once
-#include "my_motion.h"
-#include "my_mpu6050.h"
+// 库函数
+#include "Arduino.h"
 #include "SimpleFOC.h"
+// 模块头文件
+#include "my_motion.h"
+// 模块内头文件
+#include "my_mpu6050.h"
+#include "my_motor.h"
 #include "my_sms.h"
+// 全局头文件
 #include "my_io.h"
 #include "my_config.h"
 #include "my_tool.h"
 
-extern BLDCMotor motor_1;
-extern BLDCMotor motor_2;
-
-extern float target_L;
-extern float target_R;
-
 struct pid_config
 {
     float p, i, d;
-    float ramp;  // 斜率
-    float limit; // 最值限制
+    float k; // 斜率
+    float l; // 最值限制
 };
-
 struct motor_target
 {
     float pos;
     float vel;
     float tor;
 };
-
 struct motion_state
 {
-    float tor;
-    float ang;
-    float vel;
-    float pos;
+    float now;
+    float tar;
+    float err;
 };
 struct joy_state
 {
     float x;
     float y;
-    float theta;
+    float a; // 方向角
     float r;
     float x_coef;
     float y_coef;
 };
 struct fallen_state
 {
-    bool is;
-    int count;
-    bool enable;
+    bool is;     // 是否摔倒
+    int count;   // 计数
+    bool enable; // 检测是否启用
 };
 struct test_state
 {
-    bool is;
-    float mode;
-    float value;
-    float coef;
+    bool is;      // 是否打开测试模式
+    bool is_last; // 上一时刻是否是测试模式
+    float mode;   // 0 力矩 1 速度 2角度
+    float value;  // 测试值
+    float coef;   // 测试值系数
 };
-
+struct motor_tor
+{
+    float base;
+    float yaw;
+    float vel;
+    float motor_L;
+    float motor_R;
+};
+struct wel_data
+{
+    float spd1;
+    float spd2;
+    float spd_avg;
+    float pos1;
+    float pos2;
+};
 struct robot_state
 {
     bool run;
     bool chart_enable;
     float pitch_zero;
+
+    motor_tor tor;
+
     imu_data imu;
+
+    wel_data wel;
+
     joy_state joy_now;
     joy_state joy_last;
+
     fallen_state fallen;
+
     test_state test;
-    motion_state robot_now;
-    motion_state robot_err;
-    motion_state robot_tar;
+
+    motion_state ang;
+    motion_state vel;
+    motion_state pos;
+    motion_state yaw;
+
+    pid_config ang_pid;
+    pid_config vel_pid;
+    pid_config pos_pid;
+    pid_config yaw_pid;
 };
 
-extern pid_config ang_pid;
-extern pid_config vel_pid;
-extern pid_config tor_pid;
-extern pid_config yaw_pid;
+extern robot_state robot;
 
-extern robot_state my_robot;
-
-// 力矩参数
-extern float tor_base;
-extern float tor_yaw;
-extern float tor_vel;
-// 轮速
-extern float wel_spd1;
-extern float wel_spd2;
-extern float wel_spd_avg;
-
-// 遥测频率
-extern int telem_hz;
-
-void my_motor_init();
-
-void my_motor_mode(int controll_mode);
-
-void my_motor_do();
+void test_mode();
+void fall_check();
+void pitch_control();
+void robot_state_update();
+void yaw_control();
+void vel_control();
+void torque_add();

@@ -4,8 +4,6 @@
 BLDCMotor motor_1 = BLDCMotor(7);
 BLDCMotor motor_2 = BLDCMotor(7);
 
-float target_L = 0;
-float target_R = 0;
 MagneticSensorI2C sensor_1 = MagneticSensorI2C(AS5600_I2C);
 MagneticSensorI2C sensor_2 = MagneticSensorI2C(AS5600_I2C);
 
@@ -63,34 +61,12 @@ void my_motor_init()
 
 void my_motor_do()
 {
-    motor_1.target = target_L;
-    motor_2.target = target_R;
+    motor_1.target = robot.tor.motor_L;
+    motor_2.target = robot.tor.motor_R;
     // 迭代计算FOC相电压
     motor_1.loopFOC();
     motor_2.loopFOC();
     // 设置轮部电机输出
     motor_1.move();
     motor_2.move();
-}
-
-void my_motor_mode(int controll_mode)
-{
-    switch (controll_mode)
-    {
-    case 0:
-        motor_1.controller = torque;
-        motor_2.controller = torque;
-        Serial.println("电机控制模式: 力矩控制");
-
-        break;
-    case 1:
-        motor_1.controller = velocity;
-        motor_2.controller = velocity;
-        Serial.println("电机控制模式: 速度控制");
-        break;
-    case 2:
-        motor_1.controller = angle;
-        motor_2.controller = angle;
-        Serial.println("电机控制模式: 角度控制");
-    }
 }

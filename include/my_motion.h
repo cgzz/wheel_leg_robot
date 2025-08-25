@@ -21,14 +21,7 @@
 #define FALL_MIN_PITCH -40.0f
 // 结构体定义
 
+
 void my_motion_init();
 void my_motion_update();
 
-void test_mode();
-void pid_control_update();
-void fall_check();
-void my_control();
-void pitch_control();
-void yaw_control();
-void vel_control();
-void torque_add();

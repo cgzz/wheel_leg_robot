@@ -13,14 +13,6 @@
 // 函数定义
 void my_net_init();
 
-void my_net_update();
-
-void my_web_asyn_init();
-
-void my_wifi_init();
-
-void my_net_update();
-
-uint32_t my_web_data_update();
+uint32_t my_net_update();
 
 // void my_wsheart(); 心跳函数

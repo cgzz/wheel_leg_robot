@@ -28,8 +28,7 @@ void data_send_Task(void *)
 {
     for (;;)
     {
-        my_net_update();
-        uint32_t dt_ms = my_web_data_update();
+        uint32_t dt_ms = my_net_update();
         vTaskDelay(pdMS_TO_TICKS(dt_ms));
     }
 }
