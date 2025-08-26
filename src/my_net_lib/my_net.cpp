@@ -1,6 +1,7 @@
 #include "my_net_config.h"
-
+// 包含外部库
 #include "my_motion.h"
+#include "my_bat.h"
 // 发送和接受数据定义
 // PID滑块
 #define SLIDER1 robot.ang_pid.p
@@ -18,6 +19,7 @@
 #define SLIDER13 robot.pitch_zero
 // 发送数据
 #define FALLEN robot.fallen.is
+#define VOLTAGE battery
 #define ANGLE_X robot.imu.angley
 #define ANGLE_Y robot.imu.anglex
 #define ANGLE_Z robot.imu.anglez
@@ -103,6 +105,7 @@ void send_data_update()
 {
     // 发送数据更新
     bridge_data.send.fallen = FALLEN;
+    bridge_data.send.voltage = battery;
     bridge_data.send.msg[0] = ANGLE_X;       // pitch
     bridge_data.send.msg[1] = ANGLE_Y;       // roll
     bridge_data.send.msg[2] = ANGLE_Z;       // yaw

@@ -4,8 +4,7 @@
 #include "my_motor.h"
 
 robot_state robot = {
-    .run = false, // 运行指示位
-    .bat = 0,
+    .run = false,          // 运行指示位
     .chart_enable = false, // 图表推送位
     .pitch_zero = 0,       // pitch零点
     .imu = {

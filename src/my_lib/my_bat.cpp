@@ -10,7 +10,7 @@ static const adc_bits_width_t width = ADC_WIDTH_BIT_12;
 // 修改自 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_atten_t atten = ADC_ATTEN_DB_12;
 static const adc_unit_t unit = ADC_UNIT_1;
-
+float battery = 0.0;
 /// 电压检测初始化
 void bat_init()
 {

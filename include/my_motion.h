@@ -93,7 +93,6 @@ struct wel_data
 struct robot_state
 {
     bool run;
-    float voltage;
     bool chart_enable;
     float pitch_zero;
 
