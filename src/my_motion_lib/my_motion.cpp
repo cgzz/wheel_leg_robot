@@ -40,9 +40,12 @@ robot_state get_robot()
 }
 void my_motion_init()
 {
-    mpu6050_init();  // 初始化6050 角度制(yaw0, pitch0, roll0)
-    my_sms_init();   // 初始化舵机
-    my_motor_init(); // 初始化电机 力矩模式
+    // 初始化6050 角度制(yaw0, pitch0, roll0)
+    mpu6050_init();
+    // 初始化舵机
+    my_sms_init();
+    // 初始化电机 力矩模式
+    my_motor_init();
 }
 
 void my_motion_update()
