@@ -25,7 +25,7 @@ void my_web_data_update()
 void cb_pid_set(JsonObject param)
 {
     if (!param.isNull())
-        for (int i = 0; i < 13; i++)
+        for (int i = 0; i < 15; i++)
             bridge_data.rece.slide[i] = param[bridge_data.keys[i]].as<float>();
     ; // 没有就用原始数据
 }
@@ -35,21 +35,25 @@ void cb_pid_get(AsyncWebSocketClient *c)
     JsonDocument out;
     JsonObject pr = out["param"].to<JsonObject>();
     out["type"] = "pid";
-    for (int i = 0; i < 13; i++)
+    for (int i = 0; i < 15; i++)
         pr[bridge_data.keys[i]] = bridge_data.send.slide[i];
     wsSendTo(c, out);
 }
 // 测试模式
-void cb_testmode(bool enabled, int mode, float value)
+void cb_testmode(JsonObject param)
 {
-    bridge_data.rece.test_enable = enabled;
-    bridge_data.rece.test_value = value;
-    bridge_data.rece.test_mode = mode;
+    bridge_data.rece.test.enable = param["enable"].as<bool>();
+    bridge_data.rece.test.foc_mode = param["foc_mode"].as<int>();
+    bridge_data.rece.test.ser_mode = param["ser_mode"].as<int>();
+    bridge_data.rece.test.motor1 = param["motor1"].as<float>();
+    bridge_data.rece.test.motor2 = param["motor2"].as<float>();
+    bridge_data.rece.test.servo1 = param["servo1"].as<float>();
+    bridge_data.rece.test.servo2 = param["servo2"].as<float>();
 }
 // 摇杆
 void cb_joystick(float x, float y, float a)
 {
-    bridge_data.rece.joyx = my_math_deadband(my_math_limit(x, -1.0f, 1.0f), 0.02f);
-    bridge_data.rece.joyy = my_math_deadband(my_math_limit(y, -1.0f, 1.0f), 0.02f);
-    bridge_data.rece.joytheta = my_math_deadband(my_math_limit(a, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.x = my_math_deadband(my_math_limit(x, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.y = my_math_deadband(my_math_limit(y, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.a = my_math_deadband(my_math_limit(a, -1.0f, 1.0f), 0.02f);
 }

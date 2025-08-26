@@ -6,7 +6,7 @@
 #include "my_motion.h"
 // 模块内头文件
 #include "my_mpu6050.h"
-#include "my_motor.h"
+#include "my_foc.h"
 #include "my_sms.h"
 #include "my_bat.h"
 // 全局头文件
@@ -22,3 +22,4 @@ void robot_state_update();
 void yaw_control();
 void vel_control();
 void torque_add();
+void leg_update();

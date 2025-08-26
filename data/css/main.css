@@ -109,8 +109,6 @@ h2 {
     height: 0;
 }
 
-/* ==================== 关键修改 START ==================== */
-/* 将 .slider 修改为 .switch .slider，使其只作用于 switch 组件内部 */
 .switch .slider {
     position: absolute;
     cursor: pointer;
@@ -121,7 +119,6 @@ h2 {
 }
 
 .switch .slider:before {
-    /* ==================== 关键修改 END ====================== */
     position: absolute;
     content: "";
     height: 24px;
@@ -301,7 +298,45 @@ canvas {
     width: 100px;
 }
 
+.test-group {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--card-bd);
+}
 
+.test-group:first-of-type {
+    margin-top: 8px;
+    padding-top: 0;
+    border-top: none;
+}
+
+.test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.test-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.test-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.test-sliders label {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
 /* ==========================================================================
    8. 3D View & Joystick
    ========================================================================== */

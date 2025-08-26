@@ -35,28 +35,25 @@ struct web_send
     float fallen;
     float voltage;
     float msg[12];
-    float slide[13];
+    float slide[15];
 };
+
 struct web_rece
 {
     bool run;
     bool chart_enable;
     bool fallen_enable;
-    bool test_enable;
 
-    int test_mode;
-    float test_value;
+    test_state test;
 
-    float joyx;
-    float joyy;
-    float joytheta;
+    joy_state joy;
 
-    float slide[13];
+    float slide[15];
 };
 
 struct web_data
 {
-    const char *keys[13];
+    const char *keys[15];
     int telem_hz;
     int dt_ms;
     web_send send;

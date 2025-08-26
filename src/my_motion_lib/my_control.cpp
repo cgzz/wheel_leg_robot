@@ -23,10 +23,13 @@ void test_mode()
 {
     if (robot.test.enable) // 测试模式
     {
-        motor_1.controller = (MotionControlType)robot.test.mode;
-        motor_2.controller = (MotionControlType)robot.test.mode;
-        robot.tor.motor_L = robot.test.coef * robot.test.value;
-        robot.tor.motor_R = robot.test.coef * robot.test.value;
+        motor_1.controller = (MotionControlType)robot.test.foc_mode;
+        motor_2.controller = (MotionControlType)robot.test.foc_mode;
+        robot.tor.motor_L = robot.test.motor1;
+        robot.tor.motor_R = robot.test.motor2;
+        // TODO 舵机暂时只做了位置模式
+        robot.sms.Position[0] = robot.test.servo1;
+        robot.sms.Position[1] = robot.test.servo2;
         robot.test.active = true;
     }
     else if (!robot.test.enable && robot.test.active) // 停止测试模式
@@ -35,6 +38,8 @@ void test_mode()
         robot.tor.motor_R = 0.0f;
         motor_1.controller = torque; // 恢复为力矩控制
         motor_2.controller = torque; // 恢复为力矩控制
+        robot.sms.Position[0] = 2148;
+        robot.sms.Position[1] = 1948;
     }
 }
 // 俯仰角控制
@@ -95,4 +100,28 @@ void fall_check()
         robot.tor.motor_L = 0;
         robot.tor.motor_R = 0;
     }
+}
+
+PIDController pid_roll_angle{8, 0, 0, 100000, 450};
+LowPassFilter lpf_roll{0.3};
+
+// 腿部动作控制
+void leg_update()
+{
+    // 机身高度自适应控制
+    robot.sms.ACC[0] = 8, robot.sms.ACC[1] = 8;
+    robot.sms.Speed[0] = 200, robot.sms.Speed[1] = 200;
+    // leg_position_add += pid_roll_angle(roll_angle);
+    robot.leg_position_add = pid_roll_angle(lpf_roll(robot.imu.anglex + 2.0)); // test
+    robot.sms.Position[0] = 2048 + 12 + 8.4 * (robot.height - 32) - robot.leg_position_add;
+    robot.sms.Position[1] = 2048 - 12 - 8.4 * (robot.height - 32) - robot.leg_position_add;
+    if (robot.sms.Position[0] < 2110)
+        robot.sms.Position[0] = 2110;
+    else if (robot.sms.Position[0] > 2510)
+        robot.sms.Position[0] = 2510;
+    if (robot.sms.Position[1] < 1586)
+        robot.sms.Position[1] = 1586;
+    else if (robot.sms.Position[1] > 1986)
+        robot.sms.Position[1] = 1986;
+    my_sms_update();
 }

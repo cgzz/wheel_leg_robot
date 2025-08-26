@@ -1,4 +1,6 @@
 #pragma once
+#include "Arduino.h"
+#include "SMS_STS.h"
 // 定义机器前倾为正pitch 轮子旋转向前为正wel 向前移动为正pos
 // 角度环参数
 #define ANG_ERR_LIM 10.0f // 角度环误差限幅（避免过激）
@@ -19,6 +21,14 @@
 #define COUNT_FALL_MAX 5 // 连续5次采样超限才算倒地
 #define FALL_MAX_PITCH +60.0f
 #define FALL_MIN_PITCH -40.0f
+
+struct servo_data
+{
+    byte ID[2];
+    s16 Position[2];
+    u16 Speed[2];
+    byte ACC[2];
+};
 
 struct imu_data
 {
@@ -68,11 +78,14 @@ struct fallen_state
 };
 struct test_state
 {
-    bool enable; // 是否打开测试模式
-    bool active; // 上一时刻是否是测试模式
-    float mode;  // 0 力矩 1 速度 2角度
-    float value; // 测试值
-    float coef;  // 测试值系数
+    bool enable;  // 是否打开测试模式
+    bool active;  // 上一时刻是否是测试模式
+    int foc_mode; // 0 力矩 1 速度 2角度
+    int ser_mode; // 0 力矩 1 速度 2角度
+    float motor1;
+    float motor2;
+    float servo1;
+    float servo2;
 };
 struct motor_tor
 {
@@ -94,10 +107,13 @@ struct robot_state
 {
     bool run;
     bool chart_enable;
+
+    int height;
     float pitch_zero;
+    float leg_position_add;
 
     motor_tor tor;
-
+    servo_data sms;
     imu_data imu;
 
     wel_data wel;

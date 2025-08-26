@@ -57,7 +57,7 @@ SliderGroup slider[4] = {{"直立环", {"P", "I", "D"}},
                          {"偏航环", {"P", "I", "D"}}};
 
 web_data bridge_data = {
-    .keys = {"key01", "key02", "key03", "key04", "key05", "key06", "key07", "key08", "key09", "key10", "key11", "key12", "key13"},
+    .keys = {"key01", "key02", "key03", "key04", "key05", "key06", "key07", "key08", "key09", "key10", "key11", "key12", "key13", "key14", "key15"},
     .telem_hz = 10,
     .dt_ms = 100,
     .send = {
@@ -71,19 +71,15 @@ web_data bridge_data = {
         .fallen = false,
         .voltage = 0,
         .msg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        .slide = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        .slide = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     },
     .rece = {
         .run = false,
         .chart_enable = false,
         .fallen_enable = false,
-        .test_enable = false,
-        .test_mode = 0,
-        .test_value = 0,
-        .joyx = 0,
-        .joyy = 0,
-        .joytheta = 0,
-        .slide = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        .test = {false, false, 0, 0, 0, 0, 0, 0},
+        .joy = {0, 0, 0, 0, 0, 0},
+        .slide = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     },
 };
 

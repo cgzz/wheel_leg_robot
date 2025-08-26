@@ -1,6 +1,6 @@
 // /assets/js/modules/pid.js
-import { state, domElements, PID_KEYS } from '../config.js';
-import { sendWebSocketMessage } from '../services/websocket.js';
+import { state, domElements, PID_KEYS } from "../config.js";
+import { sendWebSocketMessage } from "../services/websocket.js";
 
 // Helper to query PID related elements by key
 const getPidElements = (k) => ({
@@ -20,7 +20,7 @@ function bindPidKey(keyInfo) {
   if (!nv || !rg) return;
 
   // Initialize state with value from the number input
-  const initialValue = parseFloat(nv.value || '0');
+  const initialValue = parseFloat(nv.value || "0");
   state.pidParams[k] = initialValue;
   if (sv) sv.textContent = initialValue.toFixed(fix);
 
@@ -33,13 +33,13 @@ function bindPidKey(keyInfo) {
     if (Number.isFinite(hi) && clampedValue > hi) clampedValue = hi;
     rg.value = String(clampedValue);
   };
-  
+
   updateSliderPosition(initialValue);
 
   // --- Event Listeners ---
 
   // Slider changes -> update number input and state
-  rg.addEventListener('input', () => {
+  rg.addEventListener("input", () => {
     const value = parseFloat(rg.value);
     nv.value = value.toFixed(fix);
     if (sv) sv.textContent = value.toFixed(fix);
@@ -47,7 +47,7 @@ function bindPidKey(keyInfo) {
   });
 
   // Number input changes -> update display, state, and slider position
-  nv.addEventListener('input', () => {
+  nv.addEventListener("input", () => {
     const rawValue = nv.value;
     const value = parseFloat(rawValue);
     if (Number.isFinite(value)) {
@@ -61,18 +61,18 @@ function bindPidKey(keyInfo) {
   const commitNumberInput = () => {
     let value = parseFloat(nv.value);
     if (!Number.isFinite(value)) value = 0;
-    
+
     // Format the number input
     nv.value = value.toFixed(fix);
-    
+
     // Manually trigger the 'input' event on the slider to sync everything
-    rg.dispatchEvent(new Event('input'));
+    rg.dispatchEvent(new Event("input"));
   };
 
-  nv.addEventListener('change', commitNumberInput);
-  nv.addEventListener('blur', commitNumberInput);
-  nv.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+  nv.addEventListener("change", commitNumberInput);
+  nv.addEventListener("blur", commitNumberInput);
+  nv.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
       commitNumberInput();
       e.preventDefault(); // Prevent form submission if any
     }
@@ -84,8 +84,10 @@ function bindPidKey(keyInfo) {
  */
 export function initPID() {
   PID_KEYS.forEach(bindPidKey);
-  domElements.btnPidSend.onclick = () => sendWebSocketMessage({ type: 'set_pid', param: state.pidParams });
-  domElements.btnPidPull.onclick = () => sendWebSocketMessage({ type: 'get_pid' });
+  domElements.btnPidSend.onclick = () =>
+    sendWebSocketMessage({ type: "set_pid", param: state.pidParams });
+  domElements.btnPidPull.onclick = () =>
+    sendWebSocketMessage({ type: "get_pid" });
 }
 
 /**
@@ -94,35 +96,38 @@ export function initPID() {
  */
 export function fillPidToUI(params) {
   Object.keys(params).forEach((k) => {
-    const keyInfo = PID_KEYS.find(item => item.k === k);
+    const keyInfo = PID_KEYS.find((item) => item.k === k);
     if (!keyInfo) return; // Ignore unknown keys
 
     const v = +params[k];
     if (!Number.isFinite(v)) return;
-    
+
     const { sv, nv, rg } = getPidElements(k);
-    
+
     if (sv) sv.textContent = v.toFixed(keyInfo.fix);
     if (nv) nv.value = v.toFixed(keyInfo.fix);
     if (rg) rg.value = String(v); // This will also be clamped by the browser if out of range
-    
+
     state.pidParams[k] = v;
   });
 }
 
 /**
- * Applies slider group names and labels from a configuration object.
- * @param {Array<object>} config 
+ * 应用 slider group names 和 labels from a configuration object.
+ * @param {Array<object>} config
  */
 export function applySliderConfig(config) {
   if (!Array.isArray(config)) return;
   config.forEach((groupConfig, groupIndex) => {
+    // 增加对 pidGroup5 的支持
     const titleEl = document.querySelector(`#pidGroup${groupIndex + 1}`);
     if (titleEl && groupConfig.group) titleEl.textContent = groupConfig.group;
 
     if (Array.isArray(groupConfig.names)) {
       groupConfig.names.forEach((name, sliderIndex) => {
-        const labelEl = document.querySelector(`#pid${groupIndex + 1}Label${sliderIndex + 1}`);
+        const labelEl = document.querySelector(
+          `#pid${groupIndex + 1}Label${sliderIndex + 1}`
+        );
         if (labelEl) labelEl.textContent = name;
       });
     }

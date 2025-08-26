@@ -12,7 +12,9 @@ BLDCDriver3PWM driver_2 = BLDCDriver3PWM(26, 27, 14, 12);
 
 void my_io_init()
 {
-    Serial.begin(115200);
+    Serial.begin(115200);   // foc输出
+    Serial2.begin(1000000); // 腿部sts舵机
+
     Serial.setTimeout(5); // ms
     Serial.println("串口初始化完成");
 
