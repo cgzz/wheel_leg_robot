@@ -9,27 +9,43 @@ import { openWS, wsSend, syncState, setOnTelemetry } from './ws.js';
 import { initTestMode, enableTestMode } from './testmode.js';
 
 // 摔倒指示灯：null/undefined => off（灰），true => 红，false => 绿
-function setFallLamp(stateVal) {
-  const lamp = document.querySelector('#fallLamp');
-  const label = document.querySelector('#fallLabel');
-  if (!lamp || !label) return;
+function updateFallIndicator(fallState) {
+    const lamp = document.querySelector('#fallLamp');
+    const label = document.querySelector('#fallLabel');
+    if (!lamp || !label) return;
 
-  lamp.classList.remove('green', 'red', 'off');
+    lamp.classList.remove('green', 'red', 'off');
 
-  if (stateVal === null || stateVal === undefined) {
-    lamp.classList.add('off');
-    label.textContent = '—';
-    return;
-  }
-  if (stateVal) {
-    lamp.classList.add('red');
-    label.textContent = '已摔倒';
-  } else {
-    lamp.classList.add('green');
-    label.textContent = '稳定';
-  }
+    if (fallState === null || fallState === undefined) {
+        lamp.classList.add('off');
+        label.textContent = '—';
+    } else if (fallState) {
+        lamp.classList.add('red');
+        label.textContent = '已摔倒';
+    } else {
+        lamp.classList.add('green');
+        label.textContent = '稳定';
+    }
 }
+// 更新电压指示灯
+function updateVoltageIndicator(voltage) {
+    const lamp = document.querySelector('#voltageLamp');
+    const label = document.querySelector('#voltageLabel');
+    if (!lamp || !label) return;
 
+    lamp.classList.remove('green', 'red', 'off');
+
+    // 处理无效或未接收到的电压值
+    if (voltage === null || voltage === undefined || !Number.isFinite(voltage)) {
+        lamp.classList.add('off');
+        label.textContent = '— V';
+        return;
+    }
+
+    const isLow = voltage < 7.9;
+    lamp.classList.add(isLow ? 'red' : 'green'); // 低于7.9V为红灯，否则为绿灯
+    label.textContent = voltage.toFixed(2) + 'V';
+}
 // 按钮按下效果（PC+触控）
 function initButtonPressEffects() {
   const add = (el) => {
@@ -81,8 +97,8 @@ function bindTopbar() {
       wsSend({ type: 'charts_on', on: chartSwitch.checked });
       state.chartsOn = chartSwitch.checked;
       appendLog('[INFO] charts ' + (state.chartsOn ? 'enabled' : 'disabled'));
-      // 关闭图表推送时，摔倒灯置灰并暂停更新
-      if (!state.chartsOn) setFallLamp(null);
+      if (!state.chartsOn) updateFallIndicator(null);
+      if (!state.chartsOn) updateVoltageIndicator(null);
     };
   }
 
@@ -125,12 +141,14 @@ async function init() {
   initButtonPressEffects();
 
   // 启动时灯先置灰
-  setFallLamp(null);
+  updateFallIndicator(null);
+  updateVoltageIndicator(null);
 
   // 订阅遥测：图表推送开启时才更新摔倒灯
   setOnTelemetry((msg) => {
     if (state.chartsOn && typeof msg.fallen !== 'undefined') {
-      setFallLamp(!!msg.fallen);
+      updateFallIndicator(msg.fallen);
+      updateVoltageIndicator(msg.voltage);
     }
   });
 

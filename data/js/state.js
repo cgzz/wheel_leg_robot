@@ -1,7 +1,7 @@
 // /js/state.js
 export const state = {
   connected: false,
-  chartsOn: true,
+  chartsOn: false,
   vis: true,
   joy: { x: 0, y: 0, deg: 0, dragging: false, lastSend: 0 },
   pidParam: {},               // 9 个 PID

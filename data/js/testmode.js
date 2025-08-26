@@ -22,7 +22,7 @@ function sendState(rawValue, once = false) {
   wsSend({
     type: 'test_mode',
     enabled,
-    mode,
+    currentMode,
     value,
     once
   });
@@ -92,5 +92,5 @@ export function enableTestMode(on) {
     pidCard?.classList.remove('hidden');
   }
   // 通知后端进入/退出（不带值）
-  wsSend({ type: 'test_mode', enabled, mode});
+  wsSend({ type: 'test_mode', enabled, currentMode});
 }

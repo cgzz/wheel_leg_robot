@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "SimpleFOC.h"
-// 与硬件GPIO相关的所有管脚都在这里
 
 // 编码器实例
 TwoWire I2C_1 = TwoWire(0);

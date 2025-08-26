@@ -33,30 +33,32 @@ struct web_send
     ChartConfig chart_config[3];
     SliderGroup slider_group[4];
     float fallen;
+    float voltage;
     float msg[12];
     float slide[13];
 };
 struct web_rece
 {
-    int telem_hz;
     bool run;
     bool chart_enable;
     bool fallen_enable;
-
-    float slide[13];
-
     bool test_enable;
+
     int test_mode;
     float test_value;
 
     float joyx;
     float joyy;
     float joytheta;
+
+    float slide[13];
 };
 
 struct web_data
 {
     const char *keys[13];
+    int telem_hz;
+    int dt_ms;
     web_send send;
     web_rece rece;
 };
@@ -68,13 +70,11 @@ extern AsyncWebServer server;
 extern AsyncWebSocket ws;
 
 // UI 配置打包
-JsonDocument cb_ui_config();
-uint32_t my_web_data_update();
+void my_web_data_update();
 void cb_pid_set(JsonObject param);
-JsonDocument cb_pid_get();
+void cb_pid_get(AsyncWebSocketClient *c);
 void cb_testmode(bool enabled, int mode, float value);
 void cb_joystick(float x, float y, float a);
-uint32_t my_web_data_update();
 // fs函数
 static String contentType(const String &path);
 // webtool函数

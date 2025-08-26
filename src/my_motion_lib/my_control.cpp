@@ -21,15 +21,15 @@ void robot_state_update()
 // 测试模式
 void test_mode()
 {
-    if (robot.test.is) // 测试模式
+    if (robot.test.enable) // 测试模式
     {
         motor_1.controller = (MotionControlType)robot.test.mode;
         motor_2.controller = (MotionControlType)robot.test.mode;
         robot.tor.motor_L = robot.test.coef * robot.test.value;
         robot.tor.motor_R = robot.test.coef * robot.test.value;
-        robot.test.is_last = true;
+        robot.test.active = true;
     }
-    else if (!robot.test.is && robot.test.is_last) // 停止测试模式
+    else if (!robot.test.enable && robot.test.active) // 停止测试模式
     {
         robot.tor.motor_L = 0.0f;
         robot.tor.motor_R = 0.0f;

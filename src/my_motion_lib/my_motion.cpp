@@ -4,10 +4,21 @@
 #include "my_motor.h"
 
 robot_state robot = {
-    .run = false,                       // 运行指示位
-    .chart_enable = false,              // 图表推送位
-    .pitch_zero = 0,                    // pitch零点
-    .imu = imu_raw,                     // IMU数据
+    .run = false, // 运行指示位
+    .bat = 0,
+    .chart_enable = false, // 图表推送位
+    .pitch_zero = 0,       // pitch零点
+    .imu = {
+        .anglex0 = 0,
+        .angley0 = 0,
+        .anglez0 = 0,
+        .anglex = 0,
+        .angley = 0,
+        .anglez = 0,
+        .gyrox = 0,
+        .gyroy = 0,
+        .gyroz = 0,
+    },                                  // IMU数据
     .wel = {0, 0, 0, 0, 0},             // 轮子数据
     .joy_now = {0, 0, 0, 0, 0.1, 0.1},  // 遥控数据now
     .joy_last = {0, 0, 0, 0, 0.1, 0.1}, // 遥控数据last
@@ -17,11 +28,11 @@ robot_state robot = {
         .enable = false, // 摔倒检测器开关
     },
     .test = {
-        .is = false,      // 是否处于测试模式
-        .is_last = false, // 上一时刻是否处于测试模式
-        .mode = 0,        // 电机模式
-        .value = 0,       // 测试值
-        .coef = 1,        // 测试值系数
+        .enable = false, // 是否处于测试模式
+        .active = false, // 上一时刻是否处于测试模式
+        .mode = 0,       // 电机模式
+        .value = 0,      // 测试值
+        .coef = 1,       // 测试值系数
     },
     .ang = {0, 0, 0}, // 直立环状态
     .vel = {0, 0, 0}, // 速度环状态
@@ -34,10 +45,6 @@ robot_state robot = {
     .yaw_pid = {0, 0, 0, 2, 1000},   // 偏航环参数
 };
 
-robot_state get_robot()
-{
-    return robot;
-}
 void my_motion_init()
 {
     // 初始化6050 角度制(yaw0, pitch0, roll0)

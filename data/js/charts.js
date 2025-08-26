@@ -23,10 +23,30 @@ export function initCharts(){
       }
     });
   };
-  state.charts.ch1 = mk($('#chart1'), ['epos','espd','eang']);
-  state.charts.ch2 = mk($('#chart2'), ['wspd1','wspd2','wspd']);
-  state.charts.ch3 = mk($('#chart3'), ['tbase','tyaw','tvel']);
+  state.charts.ch1 = mk($('#chart1'), ['a','b','c']);
+  state.charts.ch2 = mk($('#chart2'), ['d','e','f']);
+  state.charts.ch3 = mk($('#chart3'), ['g','h','i']);
   appendLog('[INIT] charts ready');
+}
+
+export function applyChartConfig(cfg){
+  if (!Array.isArray(cfg)) return;
+  const titles = [
+    document.querySelector('#chartTitle1'),
+    document.querySelector('#chartTitle2'),
+    document.querySelector('#chartTitle3')
+  ];
+  const charts = [state.charts.ch1, state.charts.ch2, state.charts.ch3];
+  cfg.forEach((c, i) => {
+    if (titles[i] && c.title) titles[i].textContent = c.title;
+    const ch = charts[i];
+    if (ch && Array.isArray(c.legends)) {
+      c.legends.forEach((name, j) => {
+        if (ch.data.datasets[j]) ch.data.datasets[j].label = name;
+      });
+      ch.update();
+    }
+  });
 }
 
 function push3(chart, a,b,c){

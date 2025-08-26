@@ -8,8 +8,32 @@ AsyncWebSocket ws("/ws");
 // 连接事件：仅在 WS_EVT_CONNECT 时发送一次 UI 配置；其后不再发送
 void we_evt_connect(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
+    JsonDocument doc;
+    doc["type"] = "ui_config";
+    // charts
+    JsonArray charts = doc["charts"].to<JsonArray>();
+
+    for (const auto &c : bridge_data.send.chart_config)
+    {
+        JsonObject o = charts.add<JsonObject>();
+        o["title"] = c.title;
+        JsonArray l = o["legends"].to<JsonArray>();
+        for (int i = 0; i < 3; ++i)
+            l.add(c.legend[i]);
+    }
+    // sliders
+    JsonArray sliders = doc["sliders"].to<JsonArray>();
+    for (const auto &sg : bridge_data.send.slider_group)
+    {
+        JsonObject g = sliders.add<JsonObject>();
+        g["group"] = sg.group;
+        JsonArray n = g["names"].to<JsonArray>();
+        for (int i = 0; i < 3; ++i)
+            n.add(sg.names[i]);
+    }
+    doc.shrinkToFit(); // 发送前收紧空间，减轻带宽
     // 先发 ui_config（首连一次，配置标题/图例/分组名称）
-    wsSendTo(c, cb_ui_config());
+    wsSendTo(c, doc);
     // 再发一个简单的 info，便于前端状态显示
     JsonDocument ack;
     ack["type"] = "info";
@@ -46,7 +70,7 @@ void ws_evt_data(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, 
     // ===========逻辑处理区域===========
     // 1) 设置遥测频率（上限锁 60Hz，避免队列堆积）
     if (!strcmp(typeStr, "set_rate"))
-        bridge_data.rece.telem_hz = my_math_limit(doc["hz"] | REFRESH_RATE_DEF, REFRESH_RATE_MIN, REFRESH_RATE_MAX);
+        bridge_data.telem_hz = my_math_limit(doc["hz"] | REFRESH_RATE_DEF, REFRESH_RATE_MIN, REFRESH_RATE_MAX);
 
     // 2) 运行开关（只影响执行器；不影响遥测是否发送）
     else if (!strcmp(typeStr, "toggle_run"))
@@ -78,7 +102,7 @@ void ws_evt_data(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, 
 
     // 9) 读取 PID（回填给前端）
     else if (!strcmp(typeStr, "get_pid"))
-        wsSendTo(c, cb_pid_get());
+        cb_pid_get(c);
 }
 
 // ping/pong事件
@@ -123,8 +147,8 @@ static void handleApiState(AsyncWebServerRequest *req)
 {
     JsonDocument d;
     String s;
-    d["running"] = true;
-    d["hz"] = bridge_data.rece.telem_hz;
+    d["running"] = bridge_data.rece.run;
+    d["hz"] = bridge_data.telem_hz;
     serializeJson(d, s);
     req->send(200, "application/json; charset=utf-8", s);
 }

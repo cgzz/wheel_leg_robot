@@ -10,8 +10,9 @@
 #include "my_tool.h"
 
 // 任务配置
-static TaskHandle_t control_TaskHandle = nullptr;
-static TaskHandle_t data_send_TaskHandle = nullptr; // 遥测 FreeRTOS 任务
+static TaskHandle_t control_TaskHandle = nullptr;   // 运动控制
+static TaskHandle_t data_send_TaskHandle = nullptr; // 网页任务
+static TaskHandle_t bat_check_TaskHandle = nullptr; // 电池检测任务
 
 void robot_control_Task(void *)
 {
@@ -33,6 +34,15 @@ void data_send_Task(void *)
     }
 }
 
+void bat_check_Task(void *)
+{
+    for (;;)
+    {
+        bat_update();
+        vTaskDelay(pdMS_TO_TICKS(BAT_CHECK_TIME));
+    }
+}
+
 void setup()
 {
     // 初始化IO
@@ -42,8 +52,9 @@ void setup()
     // 初始化运动
     my_motion_init();
     // 任务初始化
-    xTaskCreatePinnedToCore(robot_control_Task, "ctrl_2ms", 8192, nullptr, 20, &control_TaskHandle, 0); // 初始化运动任务
-    xTaskCreatePinnedToCore(data_send_Task, "telem", 8192, nullptr, 1, &data_send_TaskHandle, 1);
+    xTaskCreatePinnedToCore(robot_control_Task, "ctrl_2ms", 8192, nullptr, 15, &control_TaskHandle, 0); // 初始化运动任务
+    xTaskCreatePinnedToCore(data_send_Task, "telem", 8192, nullptr, 5, &data_send_TaskHandle, 1);
+    xTaskCreatePinnedToCore(bat_check_Task, "bat_check", 1024, nullptr, 4, &bat_check_TaskHandle, 1);
 }
 
 void loop()
