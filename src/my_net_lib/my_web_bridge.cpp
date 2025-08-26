@@ -27,7 +27,7 @@ void cb_pid_set(JsonObject param)
     if (!param.isNull())
         for (int i = 0; i < 15; i++)
             bridge_data.rece.slide[i] = param[bridge_data.keys[i]].as<float>();
-    ; // 没有就用原始数据
+    pid_state_update();
 }
 // PID 读取
 void cb_pid_get(AsyncWebSocketClient *c)
@@ -42,7 +42,7 @@ void cb_pid_get(AsyncWebSocketClient *c)
 // 测试模式
 void cb_testmode(JsonObject param)
 {
-    bridge_data.rece.test.enable = param["enable"].as<bool>();
+    bridge_data.rece.test.enable = param["enabled"].as<bool>();
     bridge_data.rece.test.foc_mode = param["foc_mode"].as<int>();
     bridge_data.rece.test.ser_mode = param["ser_mode"].as<int>();
     bridge_data.rece.test.motor1 = param["motor1"].as<float>();

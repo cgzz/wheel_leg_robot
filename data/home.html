@@ -12,7 +12,7 @@
 
 <body>
     <div class="wrap">
-        <h1>ESP32 控制台 · 前端原型(V4-Refactored)</h1>
+        <h1>ESP32 控制台 · 前端原型(V5-Refactored)</h1>
         <div class="card toolbar">
             <div class="hz">
                 <label>遥测频率(Hz):<input id="rateHz" type="number" min="1" max="60" step="1" value="10"></label>
@@ -160,52 +160,52 @@
         <div class="card hidden" id="testModeCard">
             <div class="card-header">
                 <h2>测试模式</h2>
-                <div class="mode-group" id="modeBtns">
-                    <button class="btn" data-mode="0">速度模式</button>
-                    <button class="btn" data-mode="1">力矩模式</button>
-                    <button class="btn" data-mode="2">位置模式</button>
-                </div>
             </div>
-
-            <div class="test-group">
-                <div class="test-header">
-                    <h3>电机测试</h3>
-                    <div class="control-group">绑定：
-                        <label class="switch">
-                            <input id="motorBindSwitch" type="checkbox"><span class="slider"></span>
-                        </label>
+            <div class="test-grid">
+                <div class="test-group">
+                    <h3>电机</h3>
+                    <div class="mode-selector">
+                        <div class="btn-group" id="focModeBtns">
+                            <button class="btn" data-mode="0">力矩</button>
+                            <button class="btn" data-mode="1">速度</button>
+                            <button class="btn" data-mode="2">位置</button>
+                        </div>
+                    </div>
+                    <label class="switch-bind"><input id="motorBindSwitch" type="checkbox"><span>绑定</span></label>
+                    <div class="slider-item">
+                        <div class="slider-head"><span>Motor 1:</span><span class="nbox"><input id="motor1TestValue"
+                                    type="number" min="-10" max="10" step="0.01" value="0"></span></div>
+                        <input id="motor1TestSlider" type="range" min="-10" max="10" step="0.01" value="0">
+                    </div>
+                    <div class="slider-item">
+                        <div class="slider-head"><span>Motor 2:</span><span class="nbox"><input id="motor2TestValue"
+                                    type="number" min="-10" max="10" step="0.01" value="0"></span></div>
+                        <input id="motor2TestSlider" type="range" min="-10" max="10" step="0.01" value="0">
                     </div>
                 </div>
-                <div class="test-sliders">
-                    <label>电机1：
-                        <input id="motor1TestValue" type="range" min="-10.00" max="10.00" step="0.1" value="0.00">
-                    </label>
-                    <label>电机2：
-                        <input id="motor2TestValue" type="range" min="-10.00" max="10.00" step="0.1" value="0.00">
-                    </label>
-                </div>
-            </div>
-
-            <div class="test-group">
-                <div class="test-header">
-                    <h3>舵机测试</h3>
-                    <div class="control-group">绑定：
-                        <label class="switch">
-                            <input id="servoBindSwitch" type="checkbox"><span class="slider"></span>
-                        </label>
+                <div class="test-group">
+                    <h3>舵机</h3>
+                    <div class="mode-selector">
+                        <div class="btn-group" id="servoModeBtns">
+                            <button class="btn" data-mode="0">力矩</button>
+                            <button class="btn" data-mode="1">速度</button>
+                            <button class="btn" data-mode="2">位置</button>
+                        </div>
                     </div>
-                </div>
-                <div class="test-sliders">
-                    <label>舵机1：
-                        <input id="servo1TestValue" type="range" min="-10.00" max="10.00" step="0.1" value="0.00">
-                    </label>
-                    <label>舵机2：
-                        <input id="servo2TestValue" type="range" min="-10.00" max="10.00" step="0.1" value="0.00">
-                    </label>
+                    <label class="switch-bind"><input id="servoBindSwitch" type="checkbox"><span>绑定</span></label>
+                    <div class="slider-item">
+                        <div class="slider-head"><span>Servo 1:</span><span class="nbox"><input id="servo1TestValue"
+                                    type="number" min="-10" max="10" step="0.01" value="0"></span></div>
+                        <input id="servo1TestSlider" type="range" min="-10" max="10" step="0.01" value="0">
+                    </div>
+                    <div class="slider-item">
+                        <div class="slider-head"><span>Servo 2:</span><span class="nbox"><input id="servo2TestValue"
+                                    type="number" min="-10" max="10" step="0.01" value="0"></span></div>
+                        <input id="servo2TestSlider" type="range" min="-10" max="10" step="0.01" value="0">
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="flex">
             <div class="card" style="flex:1.2">
                 <div class="card-header">
@@ -219,7 +219,6 @@
                             value="0.00"></label>
                     <span id="heightVal">0.00 m</span>
                 </div>
-                <div class="readout" style="margin-top:6px">提示：左键旋转，滚轮缩放，右键或 Ctrl+拖动平移</div>
             </div>
             <div class="card joystick-wrap" style="flex:.8">
                 <div class="joy-panel">

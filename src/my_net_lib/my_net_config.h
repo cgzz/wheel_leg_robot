@@ -31,7 +31,7 @@ struct SliderGroup
 struct web_send
 {
     ChartConfig chart_config[3];
-    SliderGroup slider_group[4];
+    SliderGroup slider_group[5];
     float fallen;
     float voltage;
     float msg[12];

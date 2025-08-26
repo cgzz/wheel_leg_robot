@@ -2,27 +2,33 @@
 // 包含外部库
 #include "my_motion.h"
 #include "my_bat.h"
+// 选择检测包
+#define CHART_FOC
 // 发送和接受数据定义
 // PID滑块
-#define SLIDER1 robot.ang_pid.p
-#define SLIDER2 robot.ang_pid.i
-#define SLIDER3 robot.ang_pid.d
-#define SLIDER4 robot.vel_pid.p
-#define SLIDER5 robot.vel_pid.i
-#define SLIDER6 robot.vel_pid.d
-#define SLIDER7 robot.pos_pid.p
-#define SLIDER8 robot.pos_pid.i
-#define SLIDER9 robot.pos_pid.d
-#define SLIDER10 robot.yaw_pid.p
-#define SLIDER11 robot.yaw_pid.i
-#define SLIDER12 robot.yaw_pid.d
-#define SLIDER13 robot.pitch_zero
+#define SLIDER0 robot.ang_pid.p
+#define SLIDER1 robot.ang_pid.i
+#define SLIDER2 robot.ang_pid.d
+#define SLIDER3 robot.vel_pid.p
+#define SLIDER4 robot.vel_pid.i
+#define SLIDER5 robot.vel_pid.d
+#define SLIDER6 robot.pos_pid.p
+#define SLIDER7 robot.pos_pid.i
+#define SLIDER8 robot.pos_pid.d
+#define SLIDER9 robot.yaw_pid.p
+#define SLIDER10 robot.yaw_pid.i
+#define SLIDER11 robot.yaw_pid.d
+#define SLIDER12 robot.pitch_zero
+#define SLIDER13 robot.height
+// #define SLIDER14
 // 发送数据
 #define FALLEN robot.fallen.is
 #define VOLTAGE battery
 #define ANGLE_X robot.imu.angley
 #define ANGLE_Y robot.imu.anglex
 #define ANGLE_Z robot.imu.anglez
+
+#ifdef CHART_PID
 #define CHART_DATA11 robot.ang.now
 #define CHART_DATA12 robot.ang.tar
 #define CHART_DATA13 robot.ang.err
@@ -32,10 +38,29 @@
 #define CHART_DATA31 robot.pos.now
 #define CHART_DATA32 robot.pos.tar
 #define CHART_DATA33 robot.pos.err
-#define CHART_DATA41 robot.yaw.now
-#define CHART_DATA42 robot.yaw.tar
-#define CHART_DATA43 robot.yaw.err
-#define CHART_DATA51 robot.pitch_zero
+
+ChartConfig chart1[3] = {{"直立环", {"now", "tar", "err"}},
+                         {"速度环", {"now", "tar", "err"}},
+                         {"位置环", {"now", "tar", "err"}}};
+#endif
+
+#ifdef CHART_FOC
+#define CHART_DATA11 robot.tor.motor_L
+#define CHART_DATA12 robot.wel.spd1
+#define CHART_DATA13 robot.wel.pos1
+#define CHART_DATA21 robot.tor.motor_R
+#define CHART_DATA22 robot.wel.spd2
+#define CHART_DATA23 robot.wel.pos2
+#define CHART_DATA31 0
+#define CHART_DATA32 0
+#define CHART_DATA33 0
+
+ChartConfig chart[3] = {{"L", {"tor", "vel", "pos"}},
+                        {"R", {"tor", "vel", "pos"}},
+                        {"0", {"0", "0", "0"}}};
+
+#endif
+
 // 接受数据
 #define ROBOT_RUN robot.run
 #define ROBOT_CHART robot.chart_enable
@@ -53,14 +78,11 @@
 #define JOY_Y robot.joy_now.y
 #define JOY_A robot.joy_now.a
 
-ChartConfig chart[3] = {{"直立环", {"now", "tar", "err"}},
-                        {"速度环", {"now", "tar", "err"}},
-                        {"位置环", {"now", "tar", "err"}}};
-
-SliderGroup slider[4] = {{"直立环", {"P", "I", "D"}},
+SliderGroup slider[5] = {{"直立环", {"P", "I", "D"}},
                          {"速度环", {"P", "I", "D"}},
                          {"位置环", {"P", "I", "D"}},
-                         {"偏航环", {"P", "I", "D"}}};
+                         {"偏航环", {"P", "I", "D"}},
+                         {"其他", {"pitch_zero", "hight", ""}}};
 
 web_data bridge_data = {
     .keys = {"key01", "key02", "key03", "key04", "key05", "key06", "key07", "key08", "key09", "key10", "key11", "key12", "key13", "key14", "key15"},
@@ -70,10 +92,12 @@ web_data bridge_data = {
         .chart_config = {{"", {"", "", ""}},
                          {"", {"", "", ""}},
                          {"", {"", "", ""}}},
-        .slider_group = {{"", {"", "", ""}},
-                         {"", {"", "", ""}},
-                         {"", {"", "", ""}},
-                         {"", {"", "", ""}}},
+        .slider_group = {
+            {"", {"", "", ""}},
+            {"", {"", "", ""}},
+            {"", {"", "", ""}},
+            {"", {"", "", ""}},
+            {"", {"", "", ""}}},
         .fallen = false,
         .voltage = 0,
         .msg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -93,7 +117,7 @@ void my_net_init()
 {
     my_wifi_init();     // 初始化网络
     my_web_asyn_init(); // 初始化网页
-    // 初始化UI数据
+    // 初始化UI数据 三个图表 五组滑块
     bridge_data.send.chart_config[0] = chart[0];
     bridge_data.send.chart_config[1] = chart[1];
     bridge_data.send.chart_config[2] = chart[2];
@@ -101,6 +125,7 @@ void my_net_init()
     bridge_data.send.slider_group[1] = slider[1];
     bridge_data.send.slider_group[2] = slider[2];
     bridge_data.send.slider_group[3] = slider[3];
+    bridge_data.send.slider_group[4] = slider[4];
 }
 
 void send_data_update()
@@ -121,19 +146,21 @@ void send_data_update()
     bridge_data.send.msg[10] = CHART_DATA32; // 位置环目标
     bridge_data.send.msg[11] = CHART_DATA33; // 位置环误差
     // pid数据读取
-    bridge_data.send.slide[0] = SLIDER1;
-    bridge_data.send.slide[1] = SLIDER2;
-    bridge_data.send.slide[2] = SLIDER3;
-    bridge_data.send.slide[3] = SLIDER4;
-    bridge_data.send.slide[4] = SLIDER5;
-    bridge_data.send.slide[5] = SLIDER6;
-    bridge_data.send.slide[6] = SLIDER7;
-    bridge_data.send.slide[7] = SLIDER8;
-    bridge_data.send.slide[8] = SLIDER9;
-    bridge_data.send.slide[9] = SLIDER10;
-    bridge_data.send.slide[10] = SLIDER11;
-    bridge_data.send.slide[11] = SLIDER12;
-    bridge_data.send.slide[12] = SLIDER13;
+    bridge_data.send.slide[0] = SLIDER0;
+    bridge_data.send.slide[1] = SLIDER1;
+    bridge_data.send.slide[2] = SLIDER2;
+    bridge_data.send.slide[3] = SLIDER3;
+    bridge_data.send.slide[4] = SLIDER4;
+    bridge_data.send.slide[5] = SLIDER5;
+    bridge_data.send.slide[6] = SLIDER6;
+    bridge_data.send.slide[7] = SLIDER7;
+    bridge_data.send.slide[8] = SLIDER8;
+    bridge_data.send.slide[9] = SLIDER9;
+    bridge_data.send.slide[10] = SLIDER10;
+    bridge_data.send.slide[11] = SLIDER11;
+    bridge_data.send.slide[12] = SLIDER12;
+    bridge_data.send.slide[13] = SLIDER13;
+    // bridge_data.send.slide[14] = SLIDER14;
 }
 
 void rece_data_update()
@@ -158,19 +185,21 @@ void rece_data_update()
     JOY_Y = bridge_data.rece.joy.y;
     JOY_A = bridge_data.rece.joy.a;
     // slider获取
-    SLIDER1 = bridge_data.rece.slide[0];
-    SLIDER2 = bridge_data.rece.slide[1];
-    SLIDER3 = bridge_data.rece.slide[2];
-    SLIDER4 = bridge_data.rece.slide[3];
-    SLIDER5 = bridge_data.rece.slide[4];
-    SLIDER6 = bridge_data.rece.slide[5];
-    SLIDER7 = bridge_data.rece.slide[6];
-    SLIDER8 = bridge_data.rece.slide[7];
-    SLIDER9 = bridge_data.rece.slide[8];
-    SLIDER10 = bridge_data.rece.slide[9];
-    SLIDER11 = bridge_data.rece.slide[10];
-    SLIDER12 = bridge_data.rece.slide[11];
-    SLIDER13 = bridge_data.rece.slide[12];
+    SLIDER0 = bridge_data.rece.slide[0];
+    SLIDER1 = bridge_data.rece.slide[1];
+    SLIDER2 = bridge_data.rece.slide[2];
+    SLIDER3 = bridge_data.rece.slide[3];
+    SLIDER4 = bridge_data.rece.slide[4];
+    SLIDER5 = bridge_data.rece.slide[5];
+    SLIDER6 = bridge_data.rece.slide[6];
+    SLIDER7 = bridge_data.rece.slide[7];
+    SLIDER8 = bridge_data.rece.slide[8];
+    SLIDER9 = bridge_data.rece.slide[9];
+    SLIDER10 = bridge_data.rece.slide[10];
+    SLIDER11 = bridge_data.rece.slide[11];
+    SLIDER12 = bridge_data.rece.slide[12];
+    SLIDER13 = bridge_data.rece.slide[13];
+    // SLIDER14 = bridge_data.rece.slide[14];
 }
 uint32_t my_net_update()
 {

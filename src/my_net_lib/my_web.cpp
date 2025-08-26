@@ -51,50 +51,50 @@ void we_evt_disconnect(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType 
 void ws_evt_data(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
     AwsFrameInfo *info = (AwsFrameInfo *)arg;
-
+    JsonDocument doc;
+    DeserializationError e = deserializeJson(doc, data, len);
+    const char *typeStr = doc["type"] | "";
     // 仅处理完整文本帧
     if (!(info->final && info->index == 0 && info->len == len))
         return;
     if (info->opcode != WS_TEXT)
         return;
-
-    JsonDocument doc;
-    DeserializationError e = deserializeJson(doc, data, len);
     if (e)
         return;
-
-    const char *typeStr = doc["type"] | "";
     if (!*typeStr)
         return;
+    // 调试用
+    Serial.println("--- Printing JsonDocument ---");
+    serializeJsonPretty(doc, Serial);
 
     // ===========逻辑处理区域===========
     // 1) 设置遥测频率（上限锁 60Hz，避免队列堆积）
-    if (!strcmp(typeStr, "set_rate"))
+    if (!strcmp(typeStr, "telem_hz"))
         bridge_data.telem_hz = my_math_limit(doc["hz"] | REFRESH_RATE_DEF, REFRESH_RATE_MIN, REFRESH_RATE_MAX);
 
     // 2) 运行开关（只影响执行器；不影响遥测是否发送）
-    else if (!strcmp(typeStr, "toggle_run"))
+    else if (!strcmp(typeStr, "robot_run"))
         bridge_data.rece.run = doc["running"] | false; // 默认关闭
 
     // 3) 图表推送开关（关闭时后台仅发 3 路，显著减载）
-    else if (!strcmp(typeStr, "charts_on"))
-        bridge_data.rece.chart_enable = doc["on"] | true; // 默认打开
+    else if (!strcmp(typeStr, "charts_send"))
+        bridge_data.rece.chart_enable = doc["on"] | false; // 默认关闭
 
     // 4) 测试模式：仅解析并回调（不保状态/不实现逻辑）
     else if (!strcmp(typeStr, "test_mode"))
         cb_testmode(doc.as<JsonObject>());
 
-    // 5) 特殊状态检测开关
-    else if (!strcmp(typeStr, "fall_detect"))
+    // 5) 摔倒检测开关
+    else if (!strcmp(typeStr, "fall_check"))
         bridge_data.rece.fallen_enable = doc["enable"];
 
     // 6) 姿态零偏（预留）
-    else if (!strcmp(typeStr, "att_zero"))
+    else if (!strcmp(typeStr, "imu_restart"))
         return; // TODO
 
     // 7) 摇杆
     else if (!strcmp(typeStr, "joy"))
-        cb_joystick(doc["x"] | 0.0f, doc["y"] | 0.0f, doc["deg"] | 0.0f);
+        cb_joystick(doc["x"] | 0.0f, doc["y"] | 0.0f, doc["a"] | 0.0f);
 
     // 8) 设置 PID
     else if (!strcmp(typeStr, "set_pid"))

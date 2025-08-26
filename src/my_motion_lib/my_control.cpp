@@ -17,7 +17,26 @@ void robot_state_update()
     robot.wel.spd1 = motor_1.shaftVelocity();                                   // rad/s
     robot.wel.spd2 = motor_2.shaftVelocity();                                   // rad/s
     robot.wel.spd_avg = W_SPD_FILTER(0.5f * (robot.wel.spd1 + robot.wel.spd2)); // 滤波
+    robot.wel.pos1 = motor_1.shaftAngle();                                      // rad
+    robot.wel.pos2 = motor_2.shaftAngle();                                      // rad
 }
+void pid_state_update()
+{
+    // 更新PID控制器状态
+    PID_ANG.P = robot.ang_pid.p;
+    PID_ANG.I = robot.ang_pid.i;
+    PID_ANG.D = robot.ang_pid.d;
+    PID_SPD.P = robot.vel_pid.p;
+    PID_SPD.I = robot.vel_pid.i;
+    PID_SPD.D = robot.vel_pid.d;
+    PID_POS.P = robot.pos_pid.p;
+    PID_POS.I = robot.pos_pid.i;
+    PID_POS.D = robot.pos_pid.d;
+    PID_YAW.P = robot.yaw_pid.p;
+    PID_YAW.I = robot.yaw_pid.i;
+    PID_YAW.D = robot.yaw_pid.d;
+}
+
 // 测试模式
 void test_mode()
 {
@@ -28,8 +47,8 @@ void test_mode()
         robot.tor.motor_L = robot.test.motor1;
         robot.tor.motor_R = robot.test.motor2;
         // TODO 舵机暂时只做了位置模式
-        robot.sms.Position[0] = robot.test.servo1;
-        robot.sms.Position[1] = robot.test.servo2;
+        // robot.sms.Position[0] = 2048 + 12 - robot.test.servo1;
+        // robot.sms.Position[1] = 2048 - 12 - robot.test.servo2;
         robot.test.active = true;
     }
     else if (!robot.test.enable && robot.test.active) // 停止测试模式
@@ -38,8 +57,9 @@ void test_mode()
         robot.tor.motor_R = 0.0f;
         motor_1.controller = torque; // 恢复为力矩控制
         motor_2.controller = torque; // 恢复为力矩控制
-        robot.sms.Position[0] = 2148;
-        robot.sms.Position[1] = 1948;
+        robot.sms.Position[0] = 2048 + 12;
+        robot.sms.Position[1] = 2048 - 12;
+        robot.test.active = false;
     }
 }
 // 俯仰角控制
@@ -78,8 +98,9 @@ void vel_control()
 // 力矩求和
 void torque_add()
 {
-    robot.tor.motor_L = -0.5f * my_math_limit(robot.tor.base - robot.tor.vel + robot.tor.yaw, -TOR_SUM_LIM, +TOR_SUM_LIM);
-    robot.tor.motor_R = -0.5f * my_math_limit(robot.tor.base - robot.tor.vel - robot.tor.yaw, -TOR_SUM_LIM, +TOR_SUM_LIM);
+    float tor_base = pid_lqr_u(robot.tor.base - robot.tor.vel);
+    robot.tor.motor_L = -0.5f * my_math_limit(tor_base + robot.tor.yaw, -TOR_SUM_LIM, +TOR_SUM_LIM);
+    robot.tor.motor_R = -0.5f * my_math_limit(tor_base - robot.tor.yaw, -TOR_SUM_LIM, +TOR_SUM_LIM);
 }
 // 倒地检测
 void fall_check()
@@ -108,20 +129,15 @@ LowPassFilter lpf_roll{0.3};
 // 腿部动作控制
 void leg_update()
 {
-    // 机身高度自适应控制
     robot.sms.ACC[0] = 8, robot.sms.ACC[1] = 8;
     robot.sms.Speed[0] = 200, robot.sms.Speed[1] = 200;
+    // 机身高度自适应控制
     // leg_position_add += pid_roll_angle(roll_angle);
     robot.leg_position_add = pid_roll_angle(lpf_roll(robot.imu.anglex + 2.0)); // test
     robot.sms.Position[0] = 2048 + 12 + 8.4 * (robot.height - 32) - robot.leg_position_add;
     robot.sms.Position[1] = 2048 - 12 - 8.4 * (robot.height - 32) - robot.leg_position_add;
-    if (robot.sms.Position[0] < 2110)
-        robot.sms.Position[0] = 2110;
-    else if (robot.sms.Position[0] > 2510)
-        robot.sms.Position[0] = 2510;
-    if (robot.sms.Position[1] < 1586)
-        robot.sms.Position[1] = 1586;
-    else if (robot.sms.Position[1] > 1986)
-        robot.sms.Position[1] = 1986;
+    // 限幅
+    robot.sms.Position[0] = my_math_limit(robot.sms.Position[0], 2110, 2510);
+    robot.sms.Position[1] = my_math_limit(robot.sms.Position[1], 1586, 1986);
     my_sms_update();
 }

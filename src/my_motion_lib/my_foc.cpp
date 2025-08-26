@@ -25,7 +25,7 @@ void my_motor_init()
 
     motor_1.LPF_velocity.Tf = 0.02f;
     motor_2.LPF_velocity.Tf = 0.02f;
-
+    motor_1.shaft_angle;
     // 驱动器设置
     motor_1.voltage_sensor_align = 6;
     motor_2.voltage_sensor_align = 6;

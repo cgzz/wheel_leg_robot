@@ -139,3 +139,5 @@ struct robot_state
 extern robot_state robot;
 void my_motion_init();
 void my_motion_update();
+
+void pid_state_update();

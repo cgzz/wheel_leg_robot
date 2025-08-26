@@ -7,7 +7,7 @@ export const state = {
   connected: false,
   chartsOn: false,
   isPageVisible: true,
-  joystick: { x: 0, y: 0, deg: 0, isDragging: false, lastSendTime: 0 },
+  joystick: { x: 0, y: 0, a: 0, isDragging: false, lastSendTime: 0 },
   pidParams: {},
   attitudeZero: { roll: 0, yaw: 0 },
   charts: {
@@ -24,11 +24,11 @@ export const state = {
   },
   testMode: {
     isEnabled: false,
-    currentMode: 0, // 0: speed, 1: torque, 2: position
-    motorBind: false, // 新增
-    servoBind: false, // 新增
+    motorBind: false,
+    servoBind: false,
+    foc_mode: 0,
+    ser_mode: 0,
     values: {
-      // 新增
       motor1: 0,
       motor2: 0,
       servo1: 0,
@@ -37,69 +37,83 @@ export const state = {
   },
 };
 
+// 2. DOM 元素缓存
+function getElement(id) {
+  const element = document.getElementById(id);
+  if (!element) {
+    // 允许在测试环境中某些元素不存在
+    console.warn(`Element with ID '${id}' not found.`);
+    return null;
+  }
+  return element;
+}
 /**
  * DOM 元素引用
  * 统一在此处获取，方便管理和维护
  */
 export const domElements = {
   // Toolbar
-  btnSetRate: document.getElementById("btnSetRate"),
-  rateHzInput: document.getElementById("rateHz"),
-  runSwitch: document.getElementById("runSwitch"),
-  chartSwitch: document.getElementById("chartSwitch"),
-  testModeSwitch: document.getElementById("testModeSwitch"),
-  fallDetectSwitch: document.getElementById("fallDetectSwitch"),
-  statusLabel: document.getElementById("status"),
+  btnSetRate: getElement("btnSetRate"),
+  rateHzInput: getElement("rateHz"),
+  runSwitch: getElement("runSwitch"),
+  chartSwitch: getElement("chartSwitch"),
+  testModeSwitch: getElement("testModeSwitch"),
+  fallDetectSwitch: getElement("fallDetectSwitch"),
+  statusLabel: getElement("status"),
 
   // Indicators
-  fallLamp: document.getElementById("fallLamp"),
-  fallLabel: document.getElementById("fallLabel"),
-  voltageLamp: document.getElementById("voltageLamp"),
-  voltageLabel: document.getElementById("voltageLabel"),
+  fallLamp: getElement("fallLamp"),
+  fallLabel: getElement("fallLabel"),
+  voltageLamp: getElement("voltageLamp"),
+  voltageLabel: getElement("voltageLabel"),
 
   // Charts
   chart1: {
-    canvas: document.getElementById("chart1"),
-    title: document.getElementById("chartTitle1"),
+    canvas: getElement("chart1"),
+    title: getElement("chartTitle1"),
   },
   chart2: {
-    canvas: document.getElementById("chart2"),
-    title: document.getElementById("chartTitle2"),
+    canvas: getElement("chart2"),
+    title: getElement("chartTitle2"),
   },
   chart3: {
-    canvas: document.getElementById("chart3"),
-    title: document.getElementById("chartTitle3"),
+    canvas: getElement("chart3"),
+    title: getElement("chartTitle3"),
   },
 
   // PID Controls
-  pidCard: document.getElementById("pidCard"),
-  btnPidSend: document.getElementById("btnPidSend"),
-  btnPidPull: document.getElementById("btnPidPull"),
+  pidCard: getElement("pidCard"),
+  btnPidSend: getElement("btnPidSend"),
+  btnPidPull: getElement("btnPidPull"),
 
   // Test Mode
-  testModeCard: document.getElementById("testModeCard"),
-  modeBtns: document.getElementById("modeBtns"),
-  motorBindSwitch: document.getElementById("motorBindSwitch"),
-  servoBindSwitch: document.getElementById("servoBindSwitch"),
-  motor1TestSlider: document.getElementById("motor1TestValue"),
-  motor2TestSlider: document.getElementById("motor2TestValue"),
-  servo1TestSlider: document.getElementById("servo1TestValue"),
-  servo2TestSlider: document.getElementById("servo2TestValue"),
-
+  testModeCard: getElement("testModeCard"),
+  focModeBtns: getElement("focModeBtns"),
+  servoModeBtns: getElement("servoModeBtns"),
+  motorBindSwitch: getElement("motorBindSwitch"),
+  servoBindSwitch: getElement("servoBindSwitch"),
+  motor1TestSlider: getElement("motor1TestSlider"),
+  motor2TestSlider: getElement("motor2TestSlider"),
+  servo1TestSlider: getElement("servo1TestSlider"),
+  servo2TestSlider: getElement("servo2TestSlider"),
+  motor1TestValue: getElement("motor1TestValue"),
+  motor2TestValue: getElement("motor2TestValue"),
+  servo1TestValue: getElement("servo1TestValue"),
+  servo2TestValue: getElement("servo2TestValue"),
   // 3D View
-  robotCanvas: document.getElementById("robotCanvas"),
-  btnZeroAtt: document.getElementById("btnZeroAtt"),
-  attOut: document.getElementById("attOut"),
-  heightSlider: document.getElementById("heightSlider"),
-  heightVal: document.getElementById("heightVal"),
+  robotCanvas: getElement("robotCanvas"),
+  btnZeroAtt: getElement("btnZeroAtt"),
+  attOut: getElement("attOut"),
+  heightSlider: getElement("heightSlider"),
+  heightVal: getElement("heightVal"),
 
   // Joystick
-  joystick: document.getElementById("joystick"),
-  stick: document.getElementById("stick"),
-  joyOut: document.getElementById("joyOut"),
+  joystick: getElement("joystick"),
+  stick: getElement("stick"),
+  joyOut: getElement("joyOut"),
 
   // Log
-  log: document.getElementById("log"),
+  log: getElement("log"),
 };
 
 /**
