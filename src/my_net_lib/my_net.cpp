@@ -3,15 +3,16 @@
 #include "my_motion.h"
 #include "my_bat.h"
 // 选择检测包
-#define CHART_FOC
+// #define CHART_FOC
+#define CHART_PID
 // 发送和接受数据定义
 // PID滑块
 #define SLIDER0 robot.ang_pid.p
 #define SLIDER1 robot.ang_pid.i
 #define SLIDER2 robot.ang_pid.d
-#define SLIDER3 robot.vel_pid.p
-#define SLIDER4 robot.vel_pid.i
-#define SLIDER5 robot.vel_pid.d
+#define SLIDER3 robot.spd_pid.p
+#define SLIDER4 robot.spd_pid.i
+#define SLIDER5 robot.spd_pid.d
 #define SLIDER6 robot.pos_pid.p
 #define SLIDER7 robot.pos_pid.i
 #define SLIDER8 robot.pos_pid.d
@@ -30,33 +31,33 @@
 
 #ifdef CHART_PID
 #define CHART_DATA11 robot.ang.now
-#define CHART_DATA12 robot.ang.tar
+#define CHART_DATA12 robot.ang.tor
 #define CHART_DATA13 robot.ang.err
-#define CHART_DATA21 robot.vel.now
-#define CHART_DATA22 robot.vel.tar
-#define CHART_DATA23 robot.vel.err
+#define CHART_DATA21 robot.spd.now
+#define CHART_DATA22 robot.spd.tor
+#define CHART_DATA23 robot.spd.err
 #define CHART_DATA31 robot.pos.now
-#define CHART_DATA32 robot.pos.tar
+#define CHART_DATA32 robot.pos.tor
 #define CHART_DATA33 robot.pos.err
 
-ChartConfig chart1[3] = {{"直立环", {"now", "tar", "err"}},
-                         {"速度环", {"now", "tar", "err"}},
-                         {"位置环", {"now", "tar", "err"}}};
+ChartConfig chart[3] = {{"直立环", {"now", "tor", "err"}},
+                        {"速度环", {"now", "tor", "err"}},
+                        {"位置环", {"now", "tor", "err"}}};
 #endif
 
 #ifdef CHART_FOC
-#define CHART_DATA11 robot.tor.motor_L
+#define CHART_DATA11 robot.tor.L
 #define CHART_DATA12 robot.wel.spd1
 #define CHART_DATA13 robot.wel.pos1
-#define CHART_DATA21 robot.tor.motor_R
+#define CHART_DATA21 robot.tor.R
 #define CHART_DATA22 robot.wel.spd2
 #define CHART_DATA23 robot.wel.pos2
 #define CHART_DATA31 0
 #define CHART_DATA32 0
 #define CHART_DATA33 0
 
-ChartConfig chart[3] = {{"L", {"tor", "vel", "pos"}},
-                        {"R", {"tor", "vel", "pos"}},
+ChartConfig chart[3] = {{"L", {"tor", "spd", "pos"}},
+                        {"R", {"tor", "spd", "pos"}},
                         {"0", {"0", "0", "0"}}};
 
 #endif
@@ -74,9 +75,9 @@ ChartConfig chart[3] = {{"L", {"tor", "vel", "pos"}},
 #define TEST_SERVO1 robot.test.servo1
 #define TEST_SERVO2 robot.test.servo2
 // 摇杆定义
-#define JOY_X robot.joy_now.x
-#define JOY_Y robot.joy_now.y
-#define JOY_A robot.joy_now.a
+#define JOY_X robot.joy.x
+#define JOY_Y robot.joy.y
+#define JOY_A robot.joy.a
 
 SliderGroup slider[5] = {{"直立环", {"P", "I", "D"}},
                          {"速度环", {"P", "I", "D"}},

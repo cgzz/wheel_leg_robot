@@ -61,8 +61,8 @@ void my_motor_init()
 
 void my_motor_do()
 {
-    motor_1.target = robot.tor.motor_L;
-    motor_2.target = robot.tor.motor_R;
+    motor_1.target = robot.tor.L;
+    motor_2.target = robot.tor.R;
     // 迭代计算FOC相电压
     motor_1.loopFOC();
     motor_2.loopFOC();

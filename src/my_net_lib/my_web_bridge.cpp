@@ -53,7 +53,7 @@ void cb_testmode(JsonObject param)
 // 摇杆
 void cb_joystick(float x, float y, float a)
 {
-    bridge_data.rece.joy.x = my_math_deadband(my_math_limit(x, -1.0f, 1.0f), 0.02f);
-    bridge_data.rece.joy.y = my_math_deadband(my_math_limit(y, -1.0f, 1.0f), 0.02f);
-    bridge_data.rece.joy.a = my_math_deadband(my_math_limit(a, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.x = my_db(my_lim(x, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.y = my_db(my_lim(y, -1.0f, 1.0f), 0.02f);
+    bridge_data.rece.joy.a = my_db(my_lim(a, -1.0f, 1.0f), 0.02f);
 }

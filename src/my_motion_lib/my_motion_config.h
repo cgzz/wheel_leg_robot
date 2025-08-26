@@ -17,6 +17,7 @@
 
 void test_mode();
 void fall_check();
+void robot_pos_control();
 void pitch_control();
 void robot_state_update();
 void yaw_control();

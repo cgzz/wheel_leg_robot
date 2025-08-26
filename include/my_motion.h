@@ -32,9 +32,6 @@ struct servo_data
 
 struct imu_data
 {
-    float anglex0;
-    float angley0;
-    float anglez0;
     float anglex;
     float angley;
     float anglez;
@@ -52,14 +49,16 @@ struct pid_config
 struct motor_target
 {
     float pos;
-    float vel;
+    float spd;
     float tor;
 };
 struct motion_state
 {
     float now;
+    float last;
     float tar;
     float err;
+    float tor;
 };
 struct joy_state
 {
@@ -91,15 +90,14 @@ struct motor_tor
 {
     float base;
     float yaw;
-    float vel;
-    float motor_L;
-    float motor_R;
+    float spd;
+    float L;
+    float R;
 };
 struct wel_data
 {
     float spd1;
     float spd2;
-    float spd_avg;
     float pos1;
     float pos2;
 };
@@ -107,31 +105,35 @@ struct robot_state
 {
     bool run;
     bool chart_enable;
+    bool joy_stop_control;
+    bool wel_up;
 
     int height;
     float pitch_zero;
     float leg_position_add;
 
+    wel_data wel;
     motor_tor tor;
     servo_data sms;
+
+    imu_data imu_zero;
+    imu_data imu_l;
     imu_data imu;
 
-    wel_data wel;
-
-    joy_state joy_now;
-    joy_state joy_last;
+    joy_state joy;
+    joy_state joy_l;
 
     fallen_state fallen;
 
     test_state test;
 
     motion_state ang;
-    motion_state vel;
+    motion_state spd;
     motion_state pos;
     motion_state yaw;
 
     pid_config ang_pid;
-    pid_config vel_pid;
+    pid_config spd_pid;
     pid_config pos_pid;
     pid_config yaw_pid;
 };

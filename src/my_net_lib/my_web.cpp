@@ -70,7 +70,7 @@ void ws_evt_data(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, 
     // ===========逻辑处理区域===========
     // 1) 设置遥测频率（上限锁 60Hz，避免队列堆积）
     if (!strcmp(typeStr, "telem_hz"))
-        bridge_data.telem_hz = my_math_limit(doc["hz"] | REFRESH_RATE_DEF, REFRESH_RATE_MIN, REFRESH_RATE_MAX);
+        bridge_data.telem_hz = my_lim(doc["hz"] | REFRESH_RATE_DEF, REFRESH_RATE_MIN, REFRESH_RATE_MAX);
 
     // 2) 运行开关（只影响执行器；不影响遥测是否发送）
     else if (!strcmp(typeStr, "robot_run"))

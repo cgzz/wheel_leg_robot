@@ -1,7 +1,7 @@
 #include <math.h>
 #include <Arduino.h>
 
-float my_math_deadband(float value, float deadband)
+float my_db(float value, float deadband)
 {
     float new_value = value;
     if (fabsf(value) < deadband)
@@ -9,13 +9,22 @@ float my_math_deadband(float value, float deadband)
     return new_value;
 }
 
-float my_math_limit(float value, float min, float max)
+float my_lim(float value, float min, float max)
 {
     float new_value = value;
     if (value < min)
         new_value = min;
     else if (value > max)
         new_value = max;
+    return new_value;
+}
+float my_lim(float value, float lim)
+{
+    float new_value = value;
+    if (value < -lim)
+        new_value = -lim;
+    else if (value > lim)
+        new_value = lim;
     return new_value;
 }
 

@@ -24,13 +24,22 @@ void mpu6050_init()
 void mpu6050_setzero()
 {
     mpu6050_update();
-    robot.imu.anglex0 = robot.imu.anglex;
-    robot.imu.angley0 = robot.imu.angley;
-    robot.imu.anglez0 = robot.imu.anglez;
+    robot.imu_zero.anglex = robot.imu.anglex;
+    robot.imu_zero.angley = robot.imu.angley;
+    robot.imu_zero.anglez = robot.imu.anglez;
+    robot.imu_zero.gyrox = robot.imu.gyrox;
+    robot.imu_zero.gyroy = robot.imu.gyroy;
+    robot.imu_zero.gyroz = robot.imu.gyroz;
 }
 // MPU6050更新,获取状态 角度制
 void mpu6050_update()
 {
+    robot.imu_l.anglex = robot.imu.anglex;
+    robot.imu_l.angley = robot.imu.angley;
+    robot.imu_l.anglez = robot.imu.anglez;
+    robot.imu_l.gyrox = robot.imu.gyrox;
+    robot.imu_l.gyroy = robot.imu.gyroy;
+    robot.imu_l.gyroz = robot.imu.gyroz;
     mpu6050.update();
     robot.imu.anglex = mpu6050.getAngleX();
     robot.imu.angley = mpu6050.getAngleY();

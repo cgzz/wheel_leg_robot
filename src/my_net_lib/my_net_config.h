@@ -81,8 +81,8 @@ bool wsCanBroadcast();
 void wsBroadcast(const JsonDocument &doc);
 bool handleFileRead(AsyncWebServerRequest *req, String path);
 // tool函数
-float my_math_deadband(float value, float deadband);
-float my_math_limit(float value, float min, float max);
+float my_db(float value, float deadband);
+float my_lim(float value, float min, float max);
 void rtrim_inplace(char *s);
 
 // wifi
