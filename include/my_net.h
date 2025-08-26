@@ -1,6 +1,7 @@
 #pragma once
 
 #include "my_tool.h"
+#include "my_motion.h"
 #include "freertos/FreeRTOS.h"
 
 // wifi定义

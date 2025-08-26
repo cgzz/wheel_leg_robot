@@ -82,7 +82,7 @@ void ws_evt_data(AsyncWebSocket *s, AsyncWebSocketClient *c, AwsEventType type, 
 
     // 4) 测试模式：仅解析并回调（不保状态/不实现逻辑）
     else if (!strcmp(typeStr, "test_mode"))
-        cb_testmode(doc["enabled"].as<bool>() | false, doc["mode"] | 0, doc["value"] | 0.0f);
+        cb_testmode(doc.as<JsonObject>());
 
     // 5) 特殊状态检测开关
     else if (!strcmp(typeStr, "fall_detect"))

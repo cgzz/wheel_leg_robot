@@ -40,9 +40,15 @@
 #define ROBOT_RUN robot.run
 #define ROBOT_CHART robot.chart_enable
 #define FALLEN_ENABLE robot.fallen.enable
+// 测试模式定义
 #define TEST_ENABLE robot.test.enable
-#define TEST_MODE robot.test.mode
-#define TEST_VALUE robot.test.value
+#define TEST_SER_MODE robot.test.ser_mode
+#define TEST_FOC_MODE robot.test.foc_mode
+#define TEST_MOTOR1 robot.test.motor1
+#define TEST_MOTOR2 robot.test.motor2
+#define TEST_SERVO1 robot.test.servo1
+#define TEST_SERVO2 robot.test.servo2
+// 摇杆定义
 #define JOY_X robot.joy_now.x
 #define JOY_Y robot.joy_now.y
 #define JOY_A robot.joy_now.a
@@ -138,14 +144,19 @@ void rece_data_update()
     ROBOT_RUN = bridge_data.rece.run;
     ROBOT_CHART = bridge_data.rece.chart_enable;
     FALLEN_ENABLE = bridge_data.rece.fallen_enable;
-    TEST_ENABLE = bridge_data.rece.test_enable;
     // 测试模式读取
-    TEST_MODE = bridge_data.rece.test_mode;
-    TEST_VALUE = bridge_data.rece.test_value;
+
+    TEST_ENABLE = bridge_data.rece.test.enable;
+    TEST_FOC_MODE = bridge_data.rece.test.foc_mode;
+    TEST_SER_MODE = bridge_data.rece.test.ser_mode;
+    TEST_MOTOR1 = bridge_data.rece.test.motor1;
+    TEST_MOTOR2 = bridge_data.rece.test.motor2;
+    TEST_SERVO1 = bridge_data.rece.test.servo1;
+    TEST_SERVO2 = bridge_data.rece.test.servo2;
     // JOY获取
-    JOY_X = bridge_data.rece.joyx;
-    JOY_Y = bridge_data.rece.joyy;
-    JOY_A = bridge_data.rece.joytheta;
+    JOY_X = bridge_data.rece.joy.x;
+    JOY_Y = bridge_data.rece.joy.y;
+    JOY_A = bridge_data.rece.joy.a;
     // slider获取
     SLIDER1 = bridge_data.rece.slide[0];
     SLIDER2 = bridge_data.rece.slide[1];

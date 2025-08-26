@@ -70,7 +70,7 @@ extern AsyncWebSocket ws;
 void my_web_data_update();
 void cb_pid_set(JsonObject param);
 void cb_pid_get(AsyncWebSocketClient *c);
-void cb_testmode(bool enabled, int mode, float value);
+void cb_testmode(JsonObject param);
 void cb_joystick(float x, float y, float a);
 // fs函数
 static String contentType(const String &path);
