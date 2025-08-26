@@ -147,8 +147,11 @@ static void handleApiState(AsyncWebServerRequest *req)
 {
     JsonDocument d;
     String s;
-    d["running"] = bridge_data.rece.run;
     d["hz"] = bridge_data.telem_hz;
+    d["running"] = bridge_data.rece.run;
+    // d["test_mode"] = bridge_data.rece.test_mode;
+    d["chart_enable"] = bridge_data.rece.chart_enable;
+    d["fallen_enable"] = bridge_data.rece.fallen_enable;
     serializeJson(d, s);
     req->send(200, "application/json; charset=utf-8", s);
 }

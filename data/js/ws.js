@@ -78,6 +78,10 @@ export async function syncState() {
       const sw = document.querySelector('#runSwitch');
       if (sw) sw.checked = !!s.running;
     }
+    if (typeof s.chart_enable === 'boolean') {
+      const sw = document.querySelector('#chartSwitch');
+      if (sw) sw.checked = !!s.chart_enable;
+}
     appendLog('[INIT] /api/state ok -> running=' + s.running + ', hz=' + s.hz);
   } catch (e) {
     appendLog('[INIT] /api/state fail: ' + e.message);

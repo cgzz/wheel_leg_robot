@@ -26,7 +26,8 @@ void cb_pid_set(JsonObject param)
 {
     if (!param.isNull())
         for (int i = 0; i < 13; i++)
-            bridge_data.rece.slide[i] = param[bridge_data.keys[i]] | bridge_data.rece.slide[i]; // 没有就用原始数据
+            bridge_data.rece.slide[i] = param[bridge_data.keys[i]].as<float>();
+    ; // 没有就用原始数据
 }
 // PID 读取
 void cb_pid_get(AsyncWebSocketClient *c)
