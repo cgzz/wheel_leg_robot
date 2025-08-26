@@ -105,7 +105,7 @@ void send_data_update()
 {
     // 发送数据更新
     bridge_data.send.fallen = FALLEN;
-    bridge_data.send.voltage = battery;
+    bridge_data.send.voltage = VOLTAGE;
     bridge_data.send.msg[0] = ANGLE_X;       // pitch
     bridge_data.send.msg[1] = ANGLE_Y;       // roll
     bridge_data.send.msg[2] = ANGLE_Z;       // yaw

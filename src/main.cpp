@@ -47,6 +47,8 @@ void setup()
 {
     // 初始化IO
     my_io_init();
+    // 初始化电压检测
+    bat_init();
     // 初始化网络
     my_net_init();
     // 初始化运动

@@ -49,7 +49,7 @@ void my_motion_init()
     // 初始化6050 角度制(yaw0, pitch0, roll0)
     mpu6050_init();
     // 初始化舵机
-    my_sms_init();
+    // my_sms_init();
     // 初始化电机 力矩模式
     my_motor_init();
 }
@@ -73,5 +73,5 @@ void my_motion_update()
     // 测试模式
     test_mode();
     // 电机执行
-    my_motor_do();
+    // my_motor_do();
 }

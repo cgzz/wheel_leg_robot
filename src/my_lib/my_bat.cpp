@@ -33,5 +33,5 @@ void bat_update()
     uint32_t sum = 0;
     sum = analogRead(BAT_PIN);
     uint32_t voltage = esp_adc_cal_raw_to_voltage(sum, &adc_chars);
-    double battery = voltage * 3.97 / 1000.0;
+    battery = voltage * 3.97 / 1000.0;
 }
