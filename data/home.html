@@ -14,8 +14,8 @@
     <div class="wrap">
         <h1>ESP32 控制台 · 前端原型(V5-Refactored)</h1>
         <div class="card toolbar">
-            <div class="hz">
-                <label>遥测频率(Hz):<input id="rateHz" type="number" min="1" max="60" step="1" value="10"></label>
+            <div class="ms">
+                <label>遥测间隔(ms):<input id="rateHz" type="number" min="20" max="1000" step="1" value="100"></label>
                 <button class="btn" id="btnSetRate">设置</button>
             </div>
             <div class="control-group">运行：<label class="switch"><input id="runSwitch" type="checkbox"><span
@@ -30,11 +30,11 @@
         </div>
 
         <div class="card toolbar" style="margin-top:10px">
-            <div class="hz">
+            <div class="ms">
                 <div class="indicator">摔倒：<span class="bulb off" id="fallLamp"></span><span class="readout"
                         id="fallLabel">—</span></div>
             </div>
-            <div class="hz" style="margin-left:auto">
+            <div class="ms" style="margin-left:auto">
                 <div class="indicator">电压：<span class="bulb off" id="voltageLamp"></span><span class="readout"
                         id="voltageLabel">— V</span></div>
             </div>
@@ -214,11 +214,6 @@
                 </div>
                 <div id="robotCanvas"></div>
                 <div class="readout" id="attOut">pitch: 0.0° roll: 0.0° yaw: 0.0°</div>
-                <div class="height-ctrl">
-                    <label>机器人高度：<input id="heightSlider" type="range" min="-0.10" max="0.40" step="0.01"
-                            value="0.00"></label>
-                    <span id="heightVal">0.00 m</span>
-                </div>
             </div>
             <div class="card joystick-wrap" style="flex:.8">
                 <div class="joy-panel">

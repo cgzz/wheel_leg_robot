@@ -104,9 +104,6 @@ export const domElements = {
   robotCanvas: getElement("robotCanvas"),
   btnZeroAtt: getElement("btnZeroAtt"),
   attOut: getElement("attOut"),
-  heightSlider: getElement("heightSlider"),
-  heightVal: getElement("heightVal"),
-
   // Joystick
   joystick: getElement("joystick"),
   stick: getElement("stick"),
@@ -122,7 +119,7 @@ export const domElements = {
 export const CONSTANTS = {
   MAX_CHART_POINTS: 300,
   JOYSTICK_SEND_INTERVAL: 50, // ms, 20Hz
-  VOLTAGE_LOW_THRESHOLD: 7.9, // V
+  VOLTAGE_LOW_THRESHOLD: 7.4, // V
 };
 
 // PID 参数键名列表

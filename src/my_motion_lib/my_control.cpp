@@ -19,6 +19,26 @@ LowPassFilter lpf_roll{0.3};
 
 float YAW_angle_total = 0;
 
+void pid_state_update()
+{
+    // 更新PID控制器状态
+    PID_ANG.P = robot.ang_pid.p;
+    PID_ANG.I = robot.ang_pid.i;
+    // PID_ANG.D = robot.ang_pid.d; 直接使用陀螺仪
+
+    PID_SPD.P = robot.spd_pid.p;
+    PID_SPD.I = robot.spd_pid.i;
+    PID_SPD.D = robot.spd_pid.d;
+
+    PID_POS.P = robot.pos_pid.p;
+    PID_POS.I = robot.pos_pid.i;
+    PID_POS.D = robot.pos_pid.d;
+
+    PID_YAW.P = robot.yaw_pid.p;
+    PID_YAW.I = robot.yaw_pid.i;
+    // PID_YAW.D = robot.yaw_pid.d; 直接使用陀螺仪
+}
+
 // 状态更新
 void robot_state_update()
 {
@@ -40,52 +60,13 @@ void robot_state_update()
     robot.wel.spd2 = motor_2.shaftVelocity(); // rad/s
     robot.wel.pos1 = motor_1.shaftAngle();    // rad
     robot.wel.pos2 = motor_2.shaftAngle();    // rad
+    // 更新当前状态
     robot.ang.now = robot.imu.angley;
     robot.spd.now = -0.5f * (robot.wel.spd1 + robot.wel.spd2); // rad/s
     robot.pos.now = -0.5f * (robot.wel.pos1 + robot.wel.pos2); // rad
-}
-void pid_state_update()
-{
-    // 更新PID控制器状态
-    PID_ANG.P = robot.ang_pid.p;
-    PID_ANG.I = robot.ang_pid.i;
-    PID_ANG.D = robot.ang_pid.d;
-    PID_SPD.P = robot.spd_pid.p;
-    PID_SPD.I = robot.spd_pid.i;
-    PID_SPD.D = robot.spd_pid.d;
-    PID_POS.P = robot.pos_pid.p;
-    PID_POS.I = robot.pos_pid.i;
-    PID_POS.D = robot.pos_pid.d;
-    PID_YAW.P = robot.yaw_pid.p;
-    PID_YAW.I = robot.yaw_pid.i;
-    PID_YAW.D = robot.yaw_pid.d;
+    // robot.yaw.now = ;
 }
 
-// 测试模式
-void test_mode()
-{
-    if (robot.test.enable) // 测试模式
-    {
-        motor_1.controller = (MotionControlType)robot.test.foc_mode;
-        motor_2.controller = (MotionControlType)robot.test.foc_mode;
-        robot.tor.L = robot.test.motor1;
-        robot.tor.R = robot.test.motor2;
-        // TODO 舵机暂时只做了位置模式
-        // robot.sms.Position[0] = 2048 + 12 - robot.test.servo1;
-        // robot.sms.Position[1] = 2048 - 12 - robot.test.servo2;
-        robot.test.active = true;
-    }
-    else if (!robot.test.enable && robot.test.active) // 停止测试模式
-    {
-        robot.tor.L = 0.0f;
-        robot.tor.R = 0.0f;
-        motor_1.controller = torque; // 恢复为力矩控制
-        motor_2.controller = torque; // 恢复为力矩控制
-        robot.sms.Position[0] = 2048 + 12;
-        robot.sms.Position[1] = 2048 - 12;
-        robot.test.active = false;
-    }
-}
 // 位移零点重置
 void robot_pos_control()
 {
@@ -139,8 +120,7 @@ void pitch_control()
 void yaw_control()
 {
     YAW_angle_total += robot.imu.anglez - robot.imu_l.anglez + robot.joy.x * robot.joy.x_coef; // 遥控器输入叠加;
-    // robot.tor.yaw = PID_YAW(YAW_angle_total) + my_lim(robot.yaw_pid.d * robot.imu.gyroz, robot.yaw_pid.l);
-    robot.tor.yaw = 0;
+    robot.tor.yaw = PID_YAW(YAW_angle_total) + my_lim(robot.yaw_pid.d * robot.imu.gyroz, robot.yaw_pid.l);
 }
 // 速度阻尼
 void vel_control()
@@ -150,7 +130,6 @@ void vel_control()
 // 力矩求和
 void torque_add()
 {
-    // new 小转矩补偿
     robot.tor.L = -0.5f * my_lim(robot.tor.base + robot.tor.yaw, TOR_SUM_LIM);
     robot.tor.R = -0.5f * my_lim(robot.tor.base - robot.tor.yaw, TOR_SUM_LIM);
 }
@@ -189,4 +168,30 @@ void leg_update()
     robot.sms.Position[0] = my_lim(robot.sms.Position[0], 2110, 2510);
     robot.sms.Position[1] = my_lim(robot.sms.Position[1], 1586, 1986);
     my_sms_update();
+}
+
+// 测试模式
+void test_mode()
+{
+    if (robot.test.enable) // 测试模式
+    {
+        motor_1.controller = (MotionControlType)robot.test.foc_mode;
+        motor_2.controller = (MotionControlType)robot.test.foc_mode;
+        robot.tor.L = robot.test.motor1;
+        robot.tor.R = robot.test.motor2;
+        // TODO 舵机暂时只做了位置模式
+        // robot.sms.Position[0] = 2048 + 12 - robot.test.servo1;
+        // robot.sms.Position[1] = 2048 - 12 - robot.test.servo2;
+        robot.test.active = true;
+    }
+    else if (!robot.test.enable && robot.test.active) // 停止测试模式
+    {
+        robot.tor.L = 0.0f;
+        robot.tor.R = 0.0f;
+        motor_1.controller = torque; // 恢复为力矩控制
+        motor_2.controller = torque; // 恢复为力矩控制
+        robot.sms.Position[0] = 2048 + 12;
+        robot.sms.Position[1] = 2048 - 12;
+        robot.test.active = false;
+    }
 }

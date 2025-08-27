@@ -28,50 +28,14 @@ struct SliderGroup
     const char *names[3];
 };
 
-struct web_send
-{
-    ChartConfig chart_config[3];
-    SliderGroup slider_group[5];
-    float fallen;
-    float voltage;
-    float msg[12];
-    float slide[15];
-};
-
-struct web_rece
-{
-    bool run;
-    bool chart_enable;
-    bool fallen_enable;
-
-    test_state test;
-
-    joy_state joy;
-
-    float slide[15];
-};
-
-struct web_data
-{
-    const char *keys[15];
-    int telem_hz;
-    int dt_ms;
-    web_send send;
-    web_rece rece;
-};
-
-extern web_data bridge_data;
-
 // 异步服务器对象
 extern AsyncWebServer server;
 extern AsyncWebSocket ws;
 
-// UI 配置打包
-void my_web_data_update();
-void cb_pid_set(JsonObject param);
-void cb_pid_get(AsyncWebSocketClient *c);
-void cb_testmode(JsonObject param);
-void cb_joystick(float x, float y, float a);
+void web_pid_set(JsonObject param);
+void web_pid_get(AsyncWebSocketClient *c);
+void web_testmode(JsonObject param);
+void web_joystick(float x, float y, float a);
 // fs函数
 static String contentType(const String &path);
 // webtool函数
@@ -84,9 +48,3 @@ bool handleFileRead(AsyncWebServerRequest *req, String path);
 float my_db(float value, float deadband);
 float my_lim(float value, float min, float max);
 void rtrim_inplace(char *s);
-
-// wifi
-void my_wifi_init();
-
-// web
-void my_web_asyn_init();

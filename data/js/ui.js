@@ -81,12 +81,12 @@ export function updateVoltageIndicator(voltage) {
  */
 function bindToolbarEvents() {
   domElements.btnSetRate.onclick = () => {
-    const hz = Math.max(
-      1,
-      Math.min(60, parseInt(domElements.rateHzInput.value || "10", 10))
+    const ms = Math.max(
+      20,
+      Math.min(1000, parseInt(domElements.rateHzInput.value || "100", 100))
     );
-    sendWebSocketMessage({ type: "telem_hz", hz });
-    appendLog(`[SEND] telem_hz ${hz} Hz`);
+    sendWebSocketMessage({ type: "telem_hz", ms });
+    appendLog(`[SEND] telem_hz ${ms} Hz`);
   };
 
   domElements.runSwitch.onchange = () => {

@@ -154,15 +154,6 @@ export function init3D() {
     renderer.setSize(newWidth, h);
   });
 
-  // Height slider control
-  const applyHeight = () => {
-    const y = parseFloat(domElements.heightSlider.value || '0');
-    robot.position.y = y;
-    domElements.heightVal.textContent = `${y.toFixed(2)} m`;
-  };
-  domElements.heightSlider.addEventListener('input', applyHeight);
-  domElements.heightSlider.addEventListener('change', applyHeight);
-  applyHeight();
 
   // Store references in state
   state.three = { scene, camera, renderer, robot, pcb };

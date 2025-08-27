@@ -16,12 +16,10 @@ static TaskHandle_t bat_check_TaskHandle = nullptr; // 电池检测任务
 
 void robot_control_Task(void *)
 {
-    const TickType_t kPeriod = pdMS_TO_TICKS(DT * 1000); // 2ms 固定周期
-    TickType_t lastWake = xTaskGetTickCount();
     for (;;)
     {
         my_motion_update();
-        vTaskDelayUntil(&lastWake, kPeriod);
+        vTaskDelay(pdMS_TO_TICKS(robot.dt_ms));
     }
 }
 
@@ -29,8 +27,8 @@ void data_send_Task(void *)
 {
     for (;;)
     {
-        uint32_t dt_ms = my_net_update();
-        vTaskDelay(pdMS_TO_TICKS(dt_ms));
+        my_web_data_update();
+        vTaskDelay(pdMS_TO_TICKS(robot.data_ms));
     }
 }
 
@@ -49,8 +47,10 @@ void setup()
     my_io_init();
     // 初始化电压检测
     bat_init();
-    // 初始化网络
-    my_net_init();
+    // 初始化wifi
+    my_wifi_init();
+    // 初始化异步服务器
+    my_web_asyn_init();
     // 初始化运动
     my_motion_init();
     // 任务初始化

@@ -5,13 +5,15 @@
 
 robot_state robot = {
     // 状态指示位
+    .dt_ms = 2,                // 运动控制频率
+    .data_ms = 100,            // 网页推送频率
     .run = false,              // 运行指示位
     .chart_enable = false,     // 图表推送位
     .joy_stop_control = false, // 原地停车标志
     .wel_up = false,           // 轮部离地标志
     // 修正位
     .height = 38,          // 身高
-    .pitch_zero = 0,       // pitch零点
+    .pitch_zero = 5,       // pitch零点
     .leg_position_add = 0, // 腿部位置修正值
     // 轮子/舵机/电机
     .wel = {0, 0, 0, 0},                                 // 轮子数据 wel1 , wel2, pos1, pos2
@@ -22,8 +24,8 @@ robot_state robot = {
     .imu_l = {0, 0, 0, 0, 0, 0},
     .imu = {0, 0, 0, 0, 0, 0},
     // 摇杆控制 x, y, a, r, x_coef, y_coef
-    .joy = {0, 0, 0, 0, 0.015, 0.015},
-    .joy_l = {0, 0, 0, 0, 0.015, 0.015},
+    .joy = {0, 0, 0, 0, 0.1, 0.1},
+    .joy_l = {0, 0, 0, 0, 0.1, 0.1},
     // 摔倒检测 is, count, enable
     .fallen = {false, 0, false},
     // 测试模式 enable, active, foc_mode, servo_mode, motor1, motor2, servo1, servo2
@@ -34,10 +36,10 @@ robot_state robot = {
     .pos = {0, 0, 0, 0, 0}, // 位置环状态
     .yaw = {0, 0, 0, 0, 0}, // 偏航环状态
     // pid参数设定
-    .ang_pid = {1, 0, 0.06, 100000, 8}, // 直立环参数
-    .spd_pid = {0.7, 0, 0, 100000, 8},  // 速度环参数
-    .pos_pid = {0.5, 0, 0, 100000, 8},  // 位置环参数
-    .yaw_pid = {1, 0, 0.04, 100000, 2}, // 偏航环参数
+    .ang_pid = {1.00f, 0.00f, 0.06f, 100000, 8}, // 直立环参数
+    .spd_pid = {0.70f, 0.00f, 0.00f, 100000, 8}, // 速度环参数
+    .pos_pid = {0.50f, 0.00f, 0.00f, 100000, 8}, // 位置环参数
+    .yaw_pid = {1.00f, 0.00f, 0.04f, 100000, 2}, // 偏航环参数
 };
 
 void my_motion_init()

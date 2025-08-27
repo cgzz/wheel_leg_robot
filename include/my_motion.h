@@ -103,6 +103,9 @@ struct wel_data
 };
 struct robot_state
 {
+    int dt_ms;
+    int data_ms;
+
     bool run;
     bool chart_enable;
     bool joy_stop_control;
