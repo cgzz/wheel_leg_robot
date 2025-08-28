@@ -1,5 +1,5 @@
 #include <SimpleFOC.h>
-#include "my_motion_config.h"
+#include "my_control_config.h"
 
 // PID 控制器 PID参数
 PIDController PID_ANG{robot.ang_pid.p, robot.ang_pid.i, 0, robot.ang_pid.k, robot.ang_pid.l};               // 力矩控制
@@ -179,7 +179,7 @@ void test_mode()
         motor_2.controller = (MotionControlType)robot.test.foc_mode;
         robot.tor.L = robot.test.motor1;
         robot.tor.R = robot.test.motor2;
-        // TODO 舵机暂时只做了位置模式
+        // TODO 舵机的模式
         // robot.sms.Position[0] = 2048 + 12 - robot.test.servo1;
         // robot.sms.Position[1] = 2048 - 12 - robot.test.servo2;
         robot.test.active = true;

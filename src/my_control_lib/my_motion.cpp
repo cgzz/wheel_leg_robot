@@ -1,7 +1,4 @@
-#include "my_motion_config.h"
-#include "my_sms.h"
-#include "my_mpu6050.h"
-#include "my_foc.h"
+#include "my_control_config.h"
 
 robot_state robot = {
     // 状态指示位

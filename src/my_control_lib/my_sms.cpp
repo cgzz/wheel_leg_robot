@@ -1,6 +1,5 @@
 
-#include "my_sms.h"
-#include "my_motion_config.h"
+#include "my_control_config.h"
 // STS舵机实例
 SMS_STS sms_sts;
 

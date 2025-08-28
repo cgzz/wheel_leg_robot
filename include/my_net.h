@@ -1,7 +1,7 @@
 #pragma once
 
 #include "my_tool.h"
-#include "my_motion.h"
+#include "my_control.h"
 #include "freertos/FreeRTOS.h"
 #include "my_bat.h"
 
@@ -114,4 +114,3 @@ void my_web_data_update(); // 数据更新
 #define SLIDER_NAME52 "hight"
 #define SLIDER_52 robot.height
 #define SLIDER_NAME53 ""
-

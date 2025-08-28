@@ -3,15 +3,14 @@
 #include "Arduino.h"
 #include "SimpleFOC.h"
 // 模块头文件
-#include "my_motion.h"
+#include "my_control.h"
 // 模块内头文件
-#include "my_mpu6050.h"
-#include "my_foc.h"
-#include "my_sms.h"
-#include "my_bat.h"
+#include "include/my_mpu6050.h"
+#include "include/my_foc.h"
+#include "include/my_sms.h"
 // 全局头文件
+#include "my_bat.h"
 #include "my_io.h"
-#include "my_config.h"
 #include "my_tool.h"
 // 结构体定义
 

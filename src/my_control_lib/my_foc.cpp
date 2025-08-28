@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "my_motion_config.h"
+#include "my_control_config.h"
 
 BLDCMotor motor_1 = BLDCMotor(7);
 BLDCMotor motor_2 = BLDCMotor(7);

@@ -2,11 +2,10 @@
 #include "Arduino.h"
 #include "freertos/FreeRTOS.h"
 // 加载我的头文件
-#include "my_config.h"
 #include "my_io.h"
 #include "my_bat.h"
 #include "my_net.h"
-#include "my_motion.h"
+#include "my_control.h"
 #include "my_tool.h"
 
 // 任务配置

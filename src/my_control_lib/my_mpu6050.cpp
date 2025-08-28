@@ -1,9 +1,8 @@
 //
 // Created by 22480 on 24-12-12.
 //
-#include "my_mpu6050.h"
 #include "my_io.h"
-#include "my_motion_config.h"
+#include "my_control_config.h"
 // MPU6050实例
 MPU6050 mpu6050(I2C_2);
 

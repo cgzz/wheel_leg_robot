@@ -1,4 +1,4 @@
-#include "my_motion_config.h"
+#include "simpleFOC.h"
 
 extern BLDCMotor motor_1;
 extern BLDCMotor motor_2;
